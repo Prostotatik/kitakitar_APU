@@ -1,381 +1,895 @@
-# KitaKitar - Recycling App
+<div align="center">
 
-## Project Description
+# ♻️ KitaKitar
+### *AI-Powered Recycling Ecosystem for Smarter Waste Sorting, Rewards & Climate Action*
 
-**KitaKitar** (Malay for "We Recycle") is an AI-powered recycling platform that makes waste sorting and recycling accessible to everyone. The project addresses a critical problem: **low recycling rates driven by lack of knowledge, inconvenience, and weak incentives**. Many people want to recycle but don't know how to sort waste correctly, where to bring it, or why it matters.
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-Mobile%20%2B%20Web-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
+  <img src="https://img.shields.io/badge/Firebase-Backend-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" />
+  <img src="https://img.shields.io/badge/Gemini-AI%20Vision%20%2B%20Chat-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google%20Maps-Location%20Services-34A853?style=for-the-badge&logo=googlemaps&logoColor=white" />
+  <img src="https://img.shields.io/badge/ESP32-Smart%20Bin-E7352C?style=for-the-badge" />
+</p>
 
-KitaKitar solves this with a two-part system:
-- A **mobile app** where users scan their waste with a phone camera, get instant AI-powered material recognition and preparation tips, find nearby recycling centers on a map, and earn reward points for each drop-off.
-- A **web admin panel** where recycling center managers register their locations, manage accepted materials, and process incoming transactions.
-
-### Alignment with AI and SDGs
-
-This project is built around **SDG 13: Climate Action**. Improper waste disposal and low recycling rates contribute to greenhouse gas emissions from landfills and incineration, accelerating climate change. By making recycling easier and more rewarding, KitaKitar directly supports climate action at the community level.
-
-**AI plays a central role** in lowering the barrier to recycling:
-- **Gemini Vision AI** (`gemini-2.5-flash`) analyzes photos of waste to identify material types (plastic, paper, glass, metal, etc.) and estimate weight — removing the guesswork from sorting.
-- **Gemini Chat AI** (`gemma-3-27b-it`) acts as a conversational recycling assistant, answering follow-up questions about how to prepare waste, why recycling matters, and what happens to materials after drop-off.
-
-Together, AI and gamification (points, leaderboards) turn recycling from a confusing chore into an engaging, educational habit — contributing to reduced landfill waste and lower carbon emissions.
-
----
-
-## Features
-
-### Mobile App (`mobile/`)
-- **Authentication**: Email/Password and Google Sign-In
-- **Scan**: Camera-based waste scanning with Gemini AI recognition
-- **Chat**: AI recycling assistant (follow-up questions after scan)
-- **Map**: Map with recycling centers and filters
-- **Leaders**: Leaderboards for users and centers
-- **Profile**: User profile with editing capabilities
-- **QR Scanner**: Scan QR codes to receive points
-
-### Center Web Panel (`center_web/`)
-- **Authentication**: Email/Password sign-in for center managers
-- **Dashboard**: Manage recycling center info, materials, and transactions
-- **Map**: Google Maps integration for center location
-
-## Tech Stack
-
-- **Frontend**: Flutter (mobile + web)
-- **Backend**: Firebase (Auth, Firestore, Storage, Cloud Functions)
-- **AI**: Google Gemini API (`gemini-2.5-flash` for scan, `gemma-3-27b-it` for chat)
-- **Maps**: Google Maps SDK (mobile) + Google Maps JS API (web)
-
-## Prerequisites
-
-- Flutter SDK (latest stable version)
-- Android Studio / Xcode (for mobile development)
-- Firebase project
-- Google Cloud account (for Maps API and Gemini API)
+<p align="center">
+  <img src="https://img.shields.io/badge/SDG-13%20Climate%20Action-3F7E44?style=flat-square" />
+  <img src="https://img.shields.io/badge/Status-MVP-success?style=flat-square" />
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Auth-Firebase-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/Maps-Google%20Maps-brightgreen?style=flat-square" />
+</p>
 
 ---
 
-## API Keys Overview
+### 🌍 *KitaKitar* means **“We Recycle”** in Malay  
+An AI-first platform that helps people **identify waste, recycle correctly, find nearby centers, and get rewarded** for taking climate-positive action.
+
+</div>
+
+---
+
+## ✨ Overview
+
+**KitaKitar** is a full-stack recycling platform designed to make recycling:
+
+- **Simple** → scan waste with your phone
+- **Smart** → get AI-powered material detection and guidance
+- **Accessible** → find nearby recycling centers instantly
+- **Motivating** → earn points and compete on leaderboards
+- **Scalable** → centers manage operations through a dedicated web panel
+- **Innovative** → optional **smart bin + QR redemption workflow**
+
+> 💡 The idea is simple:  
+> If people recycle less because it’s **confusing, inconvenient, and unrewarding**, then KitaKitar turns it into a **guided, gamified, AI-assisted experience**.
+
+---
+
+# 📸 Product Preview
+
+> Replace these placeholders with screenshots / GIFs later.
+
+## Mobile App
+| Scan Waste | AI Chat | Nearby Centers | Leaderboard |
+|-----------|---------|----------------|-------------|
+| ![scan](https://placehold.co/300x600?text=Scan+Screen) | ![chat](https://placehold.co/300x600?text=AI+Chat) | ![map](https://placehold.co/300x600?text=Map+Screen) | ![leaders](https://placehold.co/300x600?text=Leaderboard) |
+
+## Admin / Center Web Panel
+| Dashboard | Center Management | Transactions |
+|-----------|-------------------|--------------|
+| ![dashboard](https://placehold.co/600x350?text=Center+Dashboard) | ![center](https://placehold.co/600x350?text=Center+Settings) | ![transactions](https://placehold.co/600x350?text=Transactions) |
+
+## Smart Bin (Optional)
+| ESP32-CAM Intake | QR Reward Generation |
+|------------------|----------------------|
+| ![bin](https://placehold.co/600x350?text=ESP32-CAM+Smart+Bin) | ![qr](https://placehold.co/600x350?text=QR+Reward+Flow) |
+
+---
+
+# 🧠 Why This Matters
+
+## The Problem
+
+Recycling rates stay low because many users face the same friction points:
+
+- ❓ **“What material is this?”**
+- 🧴 **“Do I need to clean it first?”**
+- 📍 **“Where do I bring it?”**
+- 🤷 **“Is it even worth the effort?”**
+
+As a result:
+- recyclable waste often ends up in **landfills**
+- contamination reduces recycling efficiency
+- people lose trust because recycling feels **unclear and inconvenient**
+
+---
+
+# 🌱 SDG Alignment
+
+## 🎯 United Nations Sustainable Development Goal
+
+### **SDG 13 — Climate Action**
+
+Improper waste disposal contributes to:
+
+- methane emissions from landfills
+- unnecessary incineration
+- avoidable resource extraction
+- higher carbon footprints
+
+**KitaKitar** helps reduce this by making proper waste sorting and recycling easier at the **individual and community level**.
+
+---
+
+# 🚀 Core Value Proposition
+
+## KitaKitar turns recycling into a loop:
+
+```mermaid
+flowchart LR
+    A[User has waste] --> B[Scan item with AI]
+    B --> C[Understand material and prep steps]
+    C --> D[Find nearest recycling center]
+    D --> E[Drop off item]
+    E --> F[Earn points and rewards]
+    F --> G[Repeat behavior]
+    G --> H[Build sustainable habit]
+```
+
+---
+
+# 🧩 Product Components
+
+## 1) 📱 Mobile App (`mobile/`)
+The consumer-facing recycling experience.
+
+### Key capabilities
+- 🔐 Authentication (Email/Password + Google Sign-In)
+- 📷 AI waste scanning
+- 💬 Recycling assistant chat
+- 🗺 Nearby recycling center map
+- 🏆 Leaderboards and gamification
+- 👤 User profile management
+- 🔳 QR reward scanner
+
+---
+
+## 2) 🖥 Center Web Panel (`center_web/`)
+The operations layer for recycling centers.
+
+### Key capabilities
+- 🔐 Secure center login
+- 🏢 Register / manage center details
+- ♻️ Manage accepted materials
+- 📍 Map-based location setup
+- 📦 Process recycling intake transactions
+
+---
+
+## 3) 🤖 Smart Bin System (`smart_bin/`) *(Optional)*
+An IoT-assisted workflow for automated intake.
+
+### Key capabilities
+- 📸 ESP32-CAM image capture
+- 🧠 server-side classification
+- 🧾 automatic QR reward generation
+- 🔗 Firebase integration for redemption
+
+---
+
+# 🌟 Feature Highlights
+
+## 📱 Mobile Experience
+
+| Feature | Description | User Value |
+|--------|-------------|------------|
+| **AI Scan** | Camera-based material recognition | Removes guesswork |
+| **AI Chat** | Follow-up recycling guidance | Educates users |
+| **Map** | Find nearby centers | Reduces inconvenience |
+| **QR Scanner** | Redeem drop-off rewards | Creates incentive |
+| **Leaderboards** | Gamified ranking | Encourages repeat use |
+| **Profile** | Track progress & identity | Builds retention |
+
+---
+
+## 🖥 Center Web Experience
+
+| Feature | Description | Operational Value |
+|--------|-------------|-------------------|
+| **Center Login** | Secure manager access | Controlled administration |
+| **Dashboard** | Manage center data | Centralized operations |
+| **Material Config** | Define accepted waste | Cleaner sorting logic |
+| **Transactions** | Track intake records | Accountability & reporting |
+| **Maps Integration** | Register precise center location | Better discoverability |
+
+---
+
+# 🤖 AI in KitaKitar
+
+AI is not a gimmick here — it is the **core usability layer**.
+
+## 1) Vision AI — Waste Recognition
+**Model:** `gemini-2.5-flash`
+
+Used to:
+- identify likely material type
+- estimate recyclable category
+- reduce user confusion
+- provide immediate sorting confidence
+
+### Example outputs
+- Plastic bottle
+- Aluminum can
+- Cardboard packaging
+- Glass jar
+- Mixed / unclear item
+
+---
+
+## 2) Conversational AI — Recycling Assistant
+**Model:** `gemma-3-27b-it`
+
+Used to answer:
+- “Can I recycle this if it has food residue?”
+- “Do I need to remove the cap?”
+- “Why is this not accepted?”
+- “What happens after I drop this off?”
+
+This turns KitaKitar into both a **tool** and a **learning system**.
+
+---
+
+# 🧠 AI Workflow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant M as Mobile App
+    participant AI as Gemini AI
+    participant DB as Firebase
+
+    U->>M: Take photo of waste
+    M->>AI: Send image for analysis
+    AI-->>M: Return material classification + tips
+    M->>DB: Save scan result
+    U->>M: Ask follow-up question
+    M->>AI: Send chat prompt
+    AI-->>M: Return recycling guidance
+```
+
+---
+
+# 🗺 User Journey
+
+```mermaid
+journey
+    title KitaKitar User Journey
+    section Awareness
+      User has recyclable waste: 5: User
+      Unsure how to sort it: 2: User
+    section AI Assistance
+      Opens app: 5: User
+      Scans item: 5: User
+      Gets preparation guidance: 4: User
+    section Action
+      Finds nearest center: 5: User
+      Travels to center: 3: User
+      Drops off waste: 5: User
+    section Motivation
+      Scans QR: 5: User
+      Earns points: 5: User
+      Climbs leaderboard: 4: User
+```
+
+---
+
+# 🏗 System Architecture
+
+```mermaid
+flowchart TB
+    subgraph Client Layer
+        A[📱 Flutter Mobile App]
+        B[🖥 Flutter Web Admin]
+        C[🤖 ESP32-CAM Smart Bin]
+    end
+
+    subgraph Services Layer
+        D[🔥 Firebase Auth]
+        E[🗃 Firestore]
+        F[🪣 Firebase Storage]
+        G[⚙️ Cloud Functions]
+        H[🧠 Gemini AI APIs]
+        I[🗺 Google Maps APIs]
+    end
+
+    A --> D
+    A --> E
+    A --> F
+    A --> H
+    A --> I
+
+    B --> D
+    B --> E
+    B --> I
+
+    C --> G
+    G --> E
+    G --> F
+
+    H --> A
+    I --> A
+    I --> B
+```
+
+---
+
+# 🧰 Tech Stack
+
+## Frontend
+- **Flutter** (Mobile + Web)
+
+## Backend / Infrastructure
+- **Firebase Authentication**
+- **Cloud Firestore**
+- **Firebase Storage**
+- **Firebase Cloud Functions**
+
+## AI
+- **Google Gemini API**
+  - `gemini-2.5-flash` → image / material recognition
+  - `gemma-3-27b-it` → conversational recycling assistant
+
+## Maps & Geolocation
+- **Google Maps SDK** (Mobile)
+- **Google Maps JavaScript API** (Web)
+- **Places API**
+
+## IoT / Smart Bin
+- **ESP32-CAM**
+- **Python server**
+- **QR generation workflow**
+
+---
+
+# 📊 Impact Dashboard
+
+
+## Intended Impact Funnel
+
+```mermaid
+pie title KitaKitar User Value Distribution
+    "Sorting Guidance" : 35
+    "Convenience" : 25
+    "Rewards & Motivation" : 20
+    "Education" : 12
+    "Center Discovery" : 8
+```
+
+## Sustainability Outcome Model
+
+```mermaid
+xychart-beta
+    title "Projected Product Outcomes"
+    x-axis [Month1, Month2, Month3, Month4, Month5, Month6]
+    y-axis "Count" 0 --> 1000
+    bar [120, 220, 390, 530, 710, 920]
+    line [80, 180, 300, 470, 650, 860]
+```
+
+**Interpretation (example):**
+- **Bars** → total AI-assisted scans
+- **Line** → successful recycling transactions
+
+
+---
+
+# 📦 Repository Structure
+
+```bash
+KitaKitar/
+├── mobile/                  # Flutter mobile app
+│   ├── lib/
+│   │   ├── main.dart
+│   │   ├── config/          # AI config (Gemini API key)
+│   │   ├── models/          # Data models
+│   │   ├── services/        # Firebase, AI, Chat, Maps, QR services
+│   │   ├── providers/       # State management
+│   │   └── screens/
+│   │       ├── auth/
+│   │       ├── main/
+│   │       ├── scan/
+│   │       ├── map/
+│   │       ├── leaders/
+│   │       ├── profile/
+│   │       └── qr/
+│   └── pubspec.yaml
+│
+├── center_web/              # Flutter web panel for recycling centers
+│   ├── lib/
+│   │   ├── main.dart
+│   │   ├── config/          # Maps API key
+│   │   ├── models/
+│   │   ├── services/
+│   │   └── providers/
+│   ├── web/
+│   │   └── index.html
+│   └── pubspec.yaml
+│
+├── smart_bin/               # ESP32-CAM + Python server
+│   ├── KitaKitar.ino
+│   ├── server.py
+│   └── requirements.txt
+│
+├── firebase/
+│   ├── functions/           # Cloud Functions (TypeScript)
+│   └── firestore.rules      # Firestore security rules
+│
+└── README.md
+```
+
+---
+
+# 🗃 Firebase Data Model
+
+## Main Collections
+
+| Collection | Purpose |
+|-----------|---------|
+| `/users` | Mobile app users |
+| `/centers` | Registered recycling centers |
+| `/centers/{centerId}/materials` | Accepted material definitions |
+| `/materials` | Global material reference |
+| `/ai_scans` | AI scan results |
+| `/transactions` | Recycling drop-off transactions |
+| `/qr_codes` | One-time QR reward codes |
+| `/leaderboards` | Cached ranking data |
+
+---
+
+# 🧬 Firestore Relationship Overview
+
+```mermaid
+erDiagram
+    USERS ||--o{ AI_SCANS : creates
+    USERS ||--o{ TRANSACTIONS : makes
+    USERS ||--o{ QR_CODES : redeems
+    CENTERS ||--o{ MATERIALS : accepts
+    CENTERS ||--o{ TRANSACTIONS : processes
+    AI_SCANS }o--|| MATERIALS : predicts
+```
+
+---
+
+# ⚙️ Prerequisites
+
+Before running the project, ensure you have:
+
+- **Flutter SDK** (latest stable)
+- **Android Studio / Xcode**
+- **Firebase project**
+- **Google Cloud account**
+- **Google Maps APIs enabled**
+- **Gemini API key**
+- *(Optional)* Python environment for `smart_bin/`
+
+---
+
+# 🔑 API Keys Overview
 
 The project uses **3 main Google Cloud-related configurations**:
 
-| # | Service | Where it's used | How to get | How it's stored |
-|---|---------|----------------|------------|-----------------|
-| 1 | **Firebase** | Both `mobile/` and `center_web/` | Auto-generated by `flutterfire configure` | `firebase_options.dart`, `google-services.json` (Android), `GoogleService-Info.plist` (iOS) |
-| 2 | **Google Gemini AI** | `mobile/` only (scan + chat) | [Google AI Studio](https://aistudio.google.com/apikey) | `.env` (`GEMINI_API_KEY`) or `--dart-define` |
-| 3 | **Google Maps** | Both `mobile/` and `center_web/` | [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials) | Android: `local.properties`; iOS: `AppDelegate.swift`; Web: `.env` (`GOOGLE_MAPS_API_KEY`) + `web/index.html` script tag |
+| # | Service | Used In | Purpose | Storage |
+|---|---------|--------|---------|---------|
+| 1 | **Firebase** | `mobile/`, `center_web/` | Auth, Firestore, Storage | `firebase_options.dart`, `google-services.json`, `GoogleService-Info.plist` |
+| 2 | **Gemini AI** | `mobile/` | AI scan + chat | `.env` or `--dart-define` |
+| 3 | **Google Maps** | `mobile/`, `center_web/` | Maps, Places, center location | local config / `.env` / script tag |
 
 ---
 
-## Setup Instructions
+# 🚀 Setup Guide
 
-### 1. Clone the repository
+# 1) Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd KitaKitar
 ```
 
-### 2. Install Flutter dependencies
+---
+
+# 2) Install Dependencies
+
+## Mobile App
+```bash
+cd mobile
+flutter pub get
+```
+
+## Center Web Panel
+```bash
+cd ../center_web
+flutter pub get
+```
+
+---
+
+# 3) Configure Firebase
+
+## Option A — FlutterFire CLI *(Recommended)*
 
 ```bash
 # Mobile app
 cd mobile
-flutter pub get
+flutterfire configure
 
 # Center web panel
 cd ../center_web
-flutter pub get
+flutterfire configure
 ```
 
-### 3. Configure Firebase
+This generates:
 
-#### Option 1: Using FlutterFire CLI (Recommended)
+- `lib/firebase_options.dart`
+- platform-specific Firebase config references
 
+---
+
+## Option B — Manual Setup
+
+1. Create a Firebase project
+2. Enable:
+   - Authentication
+   - Firestore
+   - Storage
+3. Download platform configs:
+
+### Android
+Place in:
 ```bash
-# For mobile app
-cd mobile
-flutterfire configure
-
-# For center web panel
-cd ../center_web
-flutterfire configure
+mobile/android/app/google-services.json
 ```
 
-This will automatically generate `lib/firebase_options.dart` in each project with your Firebase API key, project ID, messaging sender ID, etc.
 
-#### Option 2: Manual Configuration
+### Web
+Configure:
+```bash
+center_web/lib/firebase_options.dart
+```
 
-1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Authentication (Email/Password + Google Sign-In)
-3. Enable Firestore Database
-4. Enable Storage
-5. Download configuration files:
-   - **Android**: Download `google-services.json` and place it in `mobile/android/app/`
-   - **iOS**: Download `GoogleService-Info.plist` and place it in `mobile/ios/Runner/`
-   - **Web**: Register a web app and copy config into `center_web/lib/firebase_options.dart`
-6. Create `mobile/lib/firebase_options.dart` manually (see template in Firebase Console)
+---
 
-### 4. Configure Google Gemini AI API Key
+# 4) Configure Gemini AI
 
-The Gemini API key is used for **waste scanning** (`gemini-2.5-flash`) and **recycling chat assistant** (`gemma-3-27b-it`).
+Used for:
+- waste scanning
+- recycling assistant chat
 
-1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey)
-2. Enable the **Generative Language API** in your Google Cloud project
+## Get API Key
+Create one from:
+- **Google AI Studio**
 
-The key is read in `mobile/lib/config/ai_config.dart` **from environment**, not hardcoded:
+Enable:
+- **Generative Language API**
 
-- `.env` file in `mobile/`:
-
+## Mobile `.env`
 ```env
 # mobile/.env
 GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 ```
 
-- Or via `--dart-define` (has lower priority than `.env`):
-
+## Or via Dart Define
 ```bash
 cd mobile
 flutter run --dart-define=GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 ```
 
-If both `.env` and `--dart-define` are empty, the app falls back to a mock AI response.
+> If no key is provided, the app falls back to **mock AI responses**.
 
-### 5. Configure Google Maps API Key
+---
 
-1. Get a Google Maps API key from [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-2. Enable the following APIs in your Google Cloud project:
-   - **Maps SDK for Android**
-   - **Maps SDK for iOS**
-   - **Maps JavaScript API** (for `center_web`)
-   - **Places API** (for center web autocomplete)
+# 5) Configure Google Maps API
 
-#### Mobile App — Android
+Enable these APIs in Google Cloud:
 
-The build system reads the key from `mobile/android/local.properties` (fallback: `google-services.json`).
+- **Maps SDK for Android**
+- **Maps SDK for iOS**
+- **Maps JavaScript API**
+- **Places API**
 
-Add to `mobile/android/local.properties`:
+---
+
+## Android
+Add to:
+
+```properties
+mobile/android/local.properties
+```
 
 ```properties
 GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
 ```
 
-The key is automatically injected into `AndroidManifest.xml` via `build.gradle.kts`.
 
-#### Mobile App — iOS
+---
 
-Add to `mobile/ios/Runner/AppDelegate.swift`:
+## Web Admin Panel
 
-```swift
-import GoogleMaps
 
-GMSServices.provideAPIKey("YOUR_GOOGLE_MAPS_API_KEY")
-```
-
-#### Center Web Panel
-
-For the web admin panel the key is stored in **`.env`** and used both in Dart and in the HTML script tag.
-
-1. Create `center_web/.env`:
-
-```env
-# center_web/.env
-GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
-```
-
-2. In `center_web/lib/config/maps_api_key.dart` the key is read from environment:
-
-```dart
-// kGoogleMapsApiKey is resolved from .env (GOOGLE_MAPS_API_KEY) or --dart-define
-final String kGoogleMapsApiKey = (() {
-  // implementation detail in maps_api_key.dart
-})();
-```
-
-3. In `center_web/web/index.html` update the Google Maps JS script tag to use the same key value:
+Update:
 
 ```html
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&loading=async" async defer></script>
+center_web/web/index.html
 ```
 
-> **Note:** HTML cannot read `.env` directly at runtime; the value from `.env` must be copied into the script tag (or injected at build/deploy time).
+```html
+<script src="https://maps.googleapis.com/maps/api/js?key=PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE&libraries=places&loading=async" async defer></script>
+```
 
-### 6. Configure Google Sign-In
+---
 
-1. In Firebase Console → Authentication → Sign-in method, enable Google
-2. **Android**: Add SHA-1 fingerprint to Firebase Console
-   ```bash
-   keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
-   ```
-3. **iOS**: Configure OAuth client in Google Cloud Console
+# 6) Configure Google Sign-In
 
-### 7. Deploy Firestore Rules
+1. Enable **Google** in Firebase Auth
+2. Add Android SHA-1:
+
+```bash
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+3. Configure iOS OAuth client if needed
+
+---
+
+# 7) Deploy Firestore Rules
 
 ```bash
 cd firebase
 firebase deploy --only firestore:rules
 ```
 
-Current rules allow all authenticated users (for testing). Update rules in `firebase/firestore.rules` for production.
+> Current rules are suitable for testing.  
+> Harden them before production deployment.
 
-### 8. Run the Applications
+---
 
+# 8) Run the Apps
+
+## Mobile App
 ```bash
-# Mobile app
 cd mobile
-# Ensure mobile/.env contains GEMINI_API_KEY
 flutter run
+```
 
-# Or override via dart-define:
+Or with explicit key:
+```bash
 flutter run --dart-define=GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+```
 
-# Center web panel
+## Center Web Panel
+```bash
 cd center_web
-# Ensure center_web/.env contains GOOGLE_MAPS_API_KEY
 flutter run -d chrome
 ```
 
-### 9. Smart bin server (optional)
+---
 
-The ESP32-CAM stack in `smart_bin/` uploads photos to `server.py`. When Firebase is configured, each upload labeled `paper` or `can` creates a one-time `qr_codes` document (same format as the center web “New intake” flow) so users can scan `KITAKITAR_QR:<id>` in the mobile app. Model label `can` is stored as material type `aluminum` with weight **0.015 kg**; `paper` uses **0.005 kg**.
+# 9) Smart Bin Server (Optional)
 
-1. Install Python dependencies:
+The `smart_bin/` system supports **camera capture → classification → QR generation**.
 
+### Install Python dependencies
 ```bash
 cd smart_bin
 pip install -r requirements.txt
 ```
 
-2. Create a **service account** in [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts) for the same project as Firebase (or Firebase Console → Project settings → Service accounts → Generate new private key). Grant access to Firestore (e.g. **Cloud Datastore User** or a role that allows read/write to your database). **Do not commit the JSON key** to git.
-
-3. Set environment variables before starting the server:
+### Required environment variables
 
 | Variable | Purpose |
 |----------|---------|
-| `FIREBASE_SERVICE_ACCOUNT` or `GOOGLE_APPLICATION_CREDENTIALS` | Absolute path to the service account JSON file |
-| `SMART_BIN_CENTER_ID` | Document ID of the recycling center in Firestore (`centers/{id}`) whose materials and points are used for QR redemptions |
+| `FIREBASE_SERVICE_ACCOUNT` or `GOOGLE_APPLICATION_CREDENTIALS` | Path to Firebase service account JSON |
+| `SMART_BIN_CENTER_ID` | Firestore center document ID |
 
-If these are missing, the server still saves images and SQLite rows, but skips QR creation (a short message is printed at startup).
-
-4. Run:
-
+### Run
 ```bash
 python server.py
 ```
 
-The JSON response from `POST /upload` includes a `qr` object when a code was created: `id`, `payload` (`KITAKITAR_QR:...`), and `png_base64` for displaying the QR on a PC screen.
+### Smart Bin Output
+A successful `POST /upload` may return:
 
-Ensure the center has `paper` and `aluminum` entries under `centers/{SMART_BIN_CENTER_ID}/materials` so pricing matches the app (otherwise defaults match the Flutter client: zero price, free material).
+- `qr.id`
+- `qr.payload`
+- `qr.png_base64`
+
+Example payload:
+```text
+KITAKITAR_QR:<id>
+```
+
+### Material Mapping
+- `can` → stored as **aluminum**, weight = **0.015 kg**
+- `paper` → weight = **0.005 kg**
 
 ---
 
-## API Keys — Quick Reference by File
+# 🔄 End-to-End Reward Flow
 
-### Mobile App (`mobile/`)
-
-| File | Key / Variable | Service | Notes |
-|------|----------------|---------|-------|
-| `.env` | `GEMINI_API_KEY` | Google Gemini AI (scan + chat) | Not committed to git; loaded via `flutter_dotenv` |
-| `lib/config/ai_config.dart` | `geminiApiKey` | Google Gemini AI (scan + chat) | Reads from `.env` / `--dart-define` |
-| `lib/firebase_options.dart` | Firebase config | Firebase (Auth, Firestore, Storage) | Generated by `flutterfire configure` |
-| `android/app/google-services.json` | Firebase config | Firebase for Android | Downloaded from Firebase Console |
-| `android/local.properties` | `GOOGLE_MAPS_API_KEY` | Google Maps SDK (Android) | Local-only, not committed |
-| `ios/Runner/AppDelegate.swift` | Maps API key | Google Maps SDK (iOS) | Hardcoded in Swift, can be read from env if desired |
-
-### Center Web Panel (`center_web/`)
-
-| File | Key / Variable | Service | Notes |
-|------|----------------|---------|-------|
-| `.env` | `GOOGLE_MAPS_API_KEY` | Google Maps (JS + Places) | Not committed to git; loaded via `flutter_dotenv` |
-| `lib/firebase_options.dart` | Firebase config | Firebase (Auth, Firestore) | Generated by `flutterfire configure` |
-| `lib/config/maps_api_key.dart` | `kGoogleMapsApiKey` | Google Maps (Places, Geocoding) | Reads from `.env` / `--dart-define` |
-| `web/index.html` | Maps JS API key | Google Maps JavaScript API + Places | Script tag must use same value as `.env` |
+```mermaid
+flowchart TD
+    A[User recycles item] --> B[Center receives material]
+    B --> C[QR code generated]
+    C --> D[User scans QR in mobile app]
+    D --> E[Transaction verified]
+    E --> F[Reward points added]
+    F --> G[Leaderboard updated]
+```
 
 ---
 
-## Project Structure
+# 🔐 Security Notes
 
-```
-KitaKitar/
-├── mobile/                 # Flutter mobile app
-│   ├── lib/
-│   │   ├── main.dart       # Entry point
-│   │   ├── config/         # AI config (Gemini API key)
-│   │   ├── models/         # Data models
-│   │   ├── services/       # Firebase, AI, Chat, Maps, QR services
-│   │   ├── providers/      # State management (Provider)
-│   │   └── screens/        # App screens
-│   │       ├── auth/       # Authentication
-│   │       ├── main/       # Main screen with navigation
-│   │       ├── scan/       # Waste scanning + AI chat
-│   │       ├── map/        # Centers map
-│   │       ├── leaders/    # Leaderboards
-│   │       ├── profile/    # User profile
-│   │       └── qr/         # QR scanner
-│   └── pubspec.yaml        # Dependencies
-├── center_web/             # Flutter web admin panel for centers
-│   ├── lib/
-│   │   ├── main.dart       # Entry point
-│   │   ├── config/         # Maps API key
-│   │   ├── models/         # Data models
-│   │   ├── services/       # Firestore service
-│   │   └── providers/      # State management
-│   ├── web/
-│   │   └── index.html      # Maps JS API key
-│   └── pubspec.yaml        # Dependencies
-├── smart_bin/               # ESP32 smart bin + Python server (WebSocket + HTTP upload, optional Firebase QR)
-│   ├── KitaKitar.ino
-│   ├── server.py
-│   └── requirements.txt
-├── firebase/
-│   ├── functions/           # Cloud Functions (TypeScript)
-│   └── firestore.rules      # Firestore security rules
-└── README.md                # This file
+## Sensitive Config
+Never commit:
+- `.env`
+- service account JSON
+- local platform secrets
+- unrestricted API keys
+
+## Recommended Production Hardening
+- Restrict **Maps API keys** by:
+  - package name (Android)
+  - bundle ID (iOS)
+  - HTTP referrer (Web)
+- Restrict Gemini API usage
+- Tighten Firestore rules
+- Add server-side validation for rewards and QR redemption
+
+---
+
+# 🛠 Development Notes
+
+## AI Development Mode
+To skip real AI calls during testing:
+
+```dart
+useMockResponse = true
 ```
 
-## Firebase Data Model
+Found in:
+```bash
+mobile/lib/config/ai_config.dart
+```
 
-### Collections
+---
 
-- `/users` - Client users (mobile app)
-- `/centers` - Recycling centers
-- `/centers/{centerId}/materials` - Materials accepted by center
-- `/materials` - Material types reference
-- `/ai_scans` - AI scan results
-- `/transactions` - Waste acceptance transactions
-- `/qr_codes` - One-time QR codes
-- `/leaderboards` - Cached leaderboard data
+## Cloud Functions
+Deploy backend functions:
 
-## Troubleshooting
+```bash
+firebase deploy --only functions
+```
 
-### Build Errors
+---
 
-If you encounter build errors:
-1. Run `flutter clean`
-2. Delete `.gradle` cache: `Remove-Item -Recurse -Force $env:USERPROFILE\.gradle`
-3. Run `flutter pub get`
-4. Try building again
+## Firestore Rules
+Deploy database rules:
 
-### Permission Denied (Firestore)
+```bash
+firebase deploy --only firestore:rules
+```
 
-Make sure Firestore rules are deployed:
+---
+
+# 🧪 Troubleshooting
+
+# Build Errors
+
+Try:
+
+```bash
+flutter clean
+flutter pub get
+```
+
+If needed, clear Gradle cache (Windows PowerShell):
+
+```powershell
+Remove-Item -Recurse -Force $env:USERPROFILE\.gradle
+```
+
+---
+
+# Firestore Permission Denied
+
+Make sure rules are deployed:
+
 ```bash
 cd firebase
 firebase deploy --only firestore:rules
 ```
 
-Current rules allow all authenticated users. Update `firebase/firestore.rules` for production security.
+---
 
-### Google Maps Not Loading
+# Google Maps Not Loading
 
-- Verify API key is correct in `AndroidManifest.xml` (Android), `AppDelegate.swift` (iOS), and `center_web/web/index.html` (web)
-- Ensure "Maps SDK for Android/iOS", "Maps JavaScript API" and "Places API" are enabled in Google Cloud Console
-- Check API key restrictions in Google Cloud Console (HTTP referrers, package name, bundle ID)
+Check:
+- API key is correct
+- required APIs are enabled
+- restrictions match your platform
 
-## Development Notes
+Required APIs:
+- Maps SDK for Android
+- Maps SDK for iOS
+- Maps JavaScript API
+- Places API
 
-- **AI Service**: Uses Google Gemini API for waste recognition (`gemini-2.5-flash`) and recycling chat (`gemma-3-27b-it`). Set `useMockResponse = true` in `mobile/lib/config/ai_config.dart` to skip API calls during development.
-- **Cloud Functions**: Deploy functions with `firebase deploy --only functions`
-- **Firestore Rules**: Current rules are permissive for testing. Update for production.
-- **API Key Security**: Sensitive keys (Gemini, Maps JS) are read from `.env` and not committed. For production, also restrict keys in [Google Cloud Console](https://console.cloud.google.com/apis/credentials) by package name / HTTP referrer.
+---
 
-## License
+# 🧭 Future Improvements
 
-[Your License Here]
+## Product / UX
+- [ ] Recycling streaks
+- [ ] Achievement badges
+- [ ] Carbon impact dashboard
+- [ ] Household recycling analytics
+- [ ] Community challenges
+
+## AI
+- [ ] Better material confidence scoring
+- [ ] Multi-object waste detection
+- [ ] “Recyclable or not?” explainability mode
+- [ ] Local recycling rule adaptation by city/country
+
+## Platform
+- [ ] Push notifications
+- [ ] Offline scan caching
+- [ ] Admin analytics dashboard
+- [ ] Smart bin fleet management
+
+---
+
+# 🗺 Roadmap
+
+```mermaid
+timeline
+    title KitaKitar Roadmap
+    MVP : AI scan
+        : AI chat
+        : Center map
+        : Rewards
+    V1.1 : Better AI classification
+         : Transaction insights
+         : Improved onboarding
+    V1.2 : Carbon impact dashboard
+         : Streaks & badges
+         : Admin analytics
+    V2.0 : Smart bin scaling
+         : Regional recycling rules
+         : Community sustainability campaigns
+```
+
+---
+
+# 🏆 What Makes This Project Special
+
+KitaKitar is not just a “recycling app”.
+
+It combines:
+
+- **AI usability**
+- **real-world sustainability**
+- **behavioral incentives**
+- **location intelligence**
+- **admin operations**
+- **optional IoT hardware**
+
+That makes it a strong example of a project at the intersection of:
+
+- **AI for social good**
+- **civic tech**
+- **climate tech**
+- **human-centered product design**
+
+---
+
+# 🤝 Contributors
+
+> Our team
+
+```md
+- Moroz Fedor — Backend / Frontend
+- Shawn Lee — Hardware / Smart Bin
+- Jing Xian — Presentation / Documentation
+- Hao Wen Chan — Presentation / Documentation
+```
+
+
+<div align="center">
+
+## ♻️ Build better recycling habits.  
+## 🌍 Reduce waste.  
+## 🤖 Let AI make sustainability easier.
+
+**KitaKitar — We Recycle. Together.**
+
+</div>
