@@ -1,0 +1,64 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Python / venv
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Flutter / Dart
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/pubspec.lock
+**/.flutter-plugins-dependencies
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/app/google-services.json
+**/android/key.properties
+**/android/app/*.keystore
+**/android/app/*.jks
+
+# iOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Node / Firebase functions (если используешь)
+firebase/functions/node_modules/
+
+# Env / secrets
+*.env
+.env.*
+*.secret.*
+
+# Databases / local data
+*.db
+*.sqlite
+
+# Google Cloud / Firebase service accounts
+smart_bin/*firebase-adminsdk*.json
+smart_bin/*.service-account.json
+
+# IDE / tooling
+.idea/
+.vscode/
+.history/
+.cursor/
+.fleet/
+.cursorignore
+can.jpg

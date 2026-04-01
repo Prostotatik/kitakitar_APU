@@ -1,0 +1,26 @@
+{
+  "name": "kita-kitar-functions",
+  "description": "Firebase Cloud Functions for Recycling (KitaKitar)",
+  "scripts": {
+    "build": "tsc",
+    "serve": "firebase emulators:start --only functions,firestore",
+    "lint": "eslint --ext .ts src",
+    "deploy": "firebase deploy --only functions"
+  },
+  "main": "lib/index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "private": true
+}
+
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="center_web">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>KitaKitar Center</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Google Maps JS API with Places. Functions are defined below and wait for API to load. -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB86LHZ1Z0sXoOTWj2Wb8NuNvLv4R4dxdw&libraries=places&loading=async" async defer></script>
+  <script>
+    (function() {
+      function whenPlacesReady(cb) {
+        if (window.google && window.google.maps && window.google.maps.places) {
+          cb();
+          return;
+        }
+        var t = setInterval(function() {
+          if (window.google && window.google.maps && window.google.maps.places) {
+            clearInterval(t);
+            cb();
+          }
+        }, 80);
+        setTimeout(function() { clearInterval(t); cb(); }, 10000);
+      }
+      window.getPlacesSuggestions = function(input) {
+        return new Promise(function(resolve) {
+          whenPlacesReady(function() {
+            if (!window.google || !window.google.maps || !window.google.maps.places) {
+              resolve({ status: 'NOT_LOADED', predictions: [] });
+              return;
+            }
+            var service = new google.maps.places.AutocompleteService();
+            service.getPlacePredictions({
+              input: input,
+              types: ['address'],
+              componentRestrictions: { country: 'my' } // restrict to Malaysia
+            }, function(predictions, status) {
+              if (status !== 'OK') {
+                resolve({ status: status || 'ERROR', predictions: [] });
+                return;
+              }
+              resolve({
+                status: 'OK',
+                predictions: (predictions || []).map(function(p) {
+                  return { description: p.description, place_id: p.place_id };
+                })
+              });
+            });
+          });
+        });
+      };
+      window.getPlaceDetails = function(placeId) {
+        return new Promise(function(resolve) {
+          whenPlacesReady(function() {
+            if (!window.google || !window.google.maps || !window.google.maps.places) {
+              resolve(null);
+              return;
+            }
+            var div = document.createElement('div');
+            var service = new google.maps.places.PlacesService(div);
+            service.getDetails({ placeId: placeId }, function(place, status) {
+              if (status !== 'OK' || !place) {
+                resolve(null);
+                return;
+              }
+              var loc = place.geometry && place.geometry.location;
+              var lat = loc ? loc.lat() : 0;
+              var lng = loc ? loc.lng() : 0;
+              resolve({
+                lat: lat,
+                lng: lng,
+                address: place.formatted_address || (lat + ', ' + lng)
+              });
+            });
+          });
+        });
+      };
+    })();
+  </script>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
