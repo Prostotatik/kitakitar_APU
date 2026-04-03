@@ -24,13 +24,60 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
+// ── SSD1306 OLED Display ──────────────────────────────────────────
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+
+#define OLED_SDA_PIN 14
+#define OLED_SCL_PIN 15
+#define OLED_WIDTH  128
+#define OLED_HEIGHT 64
+#define OLED_ADDRESS 0x3C
+
+Adafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, -1);
+bool oled_initialized = false;
+
+// ── Display State Machine ──────────────────────────────────────────
+enum DisplayState {
+  DISPLAY_IDLE,      // Ready for next item
+  DISPLAY_QR_ACTIVE, // Showing QR with timer
+  DISPLAY_ERROR      // Connection error
+};
+
+DisplayState current_state = DISPLAY_IDLE;
+unsigned long qr_timer_start = 0;
+unsigned int qr_points = 0;
+String qr_timer_seconds = "30";
+
+// ── Connection State ──────────────────────────────────────────────
+bool last_ws_connected = false;
+unsigned long last_reconnect_display = 0;
+unsigned long connection_display_time = 0;  // For "Connected!" → "Ready for next" transition
+
+// ── Servo State Machine (non-blocking) ──────────────────────────────
+enum ServoState { SERVO_IDLE, SERVO_MOVING, SERVO_WAITING, SERVO_RETURNING };
+ServoState servo_state = SERVO_IDLE;
+unsigned long servo_action_start = 0;
+int servo_target_angle = 90;
+int servo_next_action = 0;  // 0 = move to angle, 1 = return to center
+
+// ── QR Bitmap Buffer ──────────────────────────────────────────────
+// 64x64 pixels = 4096 bits = 512 bytes
+#define QR_BITMAP_SIZE 512
+uint8_t qr_bitmap[QR_BITMAP_SIZE];
+bool qr_bitmap_ready = false;
+String qr_id_current = "";
+
+// ── JSON parsing buffer ───────────────────────────────────────────
+StaticJsonDocument<4096> jsonDoc;  // Large enough for QR bitmap array
+
 // ── Camera model ─────────────────────────────────────────────────
 #define CAMERA_MODEL_AI_THINKER
 
 // ── WiFi / Server config  (edit these) ──────────────────────────
-const char* WIFI_SSID     = "YOUR WIFI";
-const char* WIFI_PASSWORD = "YOUR PASSWORD";
-const char* SERVER_HOST   = "YOUR IP";   // PC's LAN IP
+const char* WIFI_SSID     = "LEE_WIFI_2.40GHz";
+const char* WIFI_PASSWORD = "Robert0163303567#";
+const char* SERVER_HOST   = "192.168.0.130";   // PC's LAN IP
 const int   WS_PORT       = 8765;             // WebSocket metadata
 const int   HTTP_PORT     = 8766;             // HTTP photo upload
 const char* WS_PATH       = "/";
@@ -109,6 +156,76 @@ bool ei_camera_capture(uint32_t img_width, uint32_t img_height, uint8_t* out_buf
 void connectWiFi(void);
 void onWebSocketEvent(WStype_t type, uint8_t* payload, size_t length);
 void sendDetection(const char* label, float confidence);
+void renderQrDisplay();
+void displayText(const char* line1, const char* line2 = nullptr);
+void triggerServo(const char* label);  // Non-blocking servo trigger
+void updateServo();                     // Call in loop to update servo state
+
+// ════════════════════════════════════════════════════════════════
+// QR Event Handlers
+// ════════════════════════════════════════════════════════════════
+void handleQrGenerated() {
+    // Extract QR data from jsonDoc
+    qr_id_current = jsonDoc["qr_id"].as<String>();
+    qr_points = jsonDoc["points"] | 0;
+    int timer_secs = jsonDoc["timer_seconds"] | 30;
+
+    // Extract bitmap array
+    JsonArray bitmapArray = jsonDoc["qr_bitmap"].as<JsonArray>();
+    if (bitmapArray.size() != QR_BITMAP_SIZE) {
+        Serial.printf("[OLED] Invalid bitmap size: %d expected %d\n",
+                      bitmapArray.size(), QR_BITMAP_SIZE);
+        return;
+    }
+
+    // Copy bitmap to buffer
+    for (int i = 0; i < QR_BITMAP_SIZE && i < bitmapArray.size(); i++) {
+        qr_bitmap[i] = bitmapArray[i];
+    }
+    qr_bitmap_ready = true;
+
+    // Update state
+    current_state = DISPLAY_QR_ACTIVE;
+    qr_timer_start = millis();
+    qr_timer_seconds = String(timer_secs);
+
+    // Render QR on display
+    renderQrDisplay();
+    Serial.printf("[OLED] QR generated: id=%s points=%u\n",
+                  qr_id_current.c_str(), qr_points);
+}
+
+void handleQrScanned() {
+    Serial.println("[OLED] QR scanned by user");
+    current_state = DISPLAY_IDLE;
+    qr_bitmap_ready = false;
+    qr_id_current = "";
+    qr_points = 0;
+    displayText("Points Claimed!", "Ready for next");
+    // Removed blocking delay - display updates naturally in loop
+}
+
+void handleTimerExpired() {
+    Serial.println("[OLED] Timer expired");
+    current_state = DISPLAY_IDLE;
+    qr_bitmap_ready = false;
+    qr_id_current = "";
+    qr_points = 0;
+    displayText("Ready for", "next item");
+}
+
+void displayConnectionError() {
+    if (!oled_initialized) return;
+    current_state = DISPLAY_ERROR;
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 20);
+    display.println("No Connection");
+    display.setCursor(0, 40);
+    display.println("Retrying...");
+    display.display();
+}
 
 // ════════════════════════════════════════════════════════════════
 // WebSocket event handler
@@ -118,14 +235,43 @@ void onWebSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         case WStype_CONNECTED:
             ws_connected = true;
             Serial.println("[WS] Connected");
+            displayText("Connected to", "server");
+            // Removed blocking delay - let main loop handle display refresh
             break;
         case WStype_DISCONNECTED:
             ws_connected = false;
             Serial.println("[WS] Disconnected — retrying...");
+            current_state = DISPLAY_ERROR;
+            displayText("No Connection", "Retrying...");
             break;
-        case WStype_TEXT:
-            Serial.printf("[WS] Server: %s\n", payload);
+        case WStype_TEXT: {
+            // Parse incoming JSON from server
+            DeserializationError err = deserializeJson(jsonDoc, payload, length);
+            if (err) {
+                Serial.printf("[WS] JSON parse error: %s\n", err.c_str());
+                break;
+            }
+
+            const char* event = jsonDoc["event"];
+            if (!event) {
+                // Old-style detection confirmation (backward compat)
+                Serial.printf("[WS] Server: %s\n", (char*)payload);
+                break;
+            }
+
+            if (strcmp(event, "qr_generated") == 0) {
+                handleQrGenerated();
+            } else if (strcmp(event, "qr_scanned") == 0) {
+                handleQrScanned();
+            } else if (strcmp(event, "timer_expired") == 0) {
+                handleTimerExpired();
+            } else if (strcmp(event, "error") == 0) {
+                const char* msg = jsonDoc["message"] | "Unknown error";
+                Serial.printf("[WS] Server error: %s\n", msg);
+                displayText("Error:", msg);
+            }
             break;
+        }
         case WStype_ERROR:
             Serial.printf("[WS] Error: %s\n", payload ? (char*)payload : "null");
             break;
@@ -144,6 +290,147 @@ void connectWiFi() {
         Serial.print(".");
     }
     Serial.println("\n[WiFi] Connected — IP: " + WiFi.localIP().toString());
+}
+
+// ════════════════════════════════════════════════════════════════
+// OLED Display Helpers
+// ════════════════════════════════════════════════════════════════
+void displayClear() {
+    if (!oled_initialized) return;
+    display.clearDisplay();
+}
+
+void displayText(const char* line1, const char* line2) {
+    if (!oled_initialized) return;
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 24);
+    display.println(line1);
+    if (line2) {
+        display.setCursor(0, 36);
+        display.println(line2);
+    }
+    display.display();
+}
+
+// ════════════════════════════════════════════════════════════════
+// Non-Blocking Servo Control
+// ════════════════════════════════════════════════════════════════
+void triggerServo(const char* label) {
+    // Start servo movement (non-blocking)
+    if (strcmp(label, "paper") == 0) {
+        servo_target_angle = 0;
+    } else if (strcmp(label, "can") == 0) {
+        servo_target_angle = 180;
+    } else {
+        return;  // Unknown label
+    }
+
+    myServo.write(servo_target_angle);
+    servo_state = SERVO_MOVING;
+    servo_action_start = millis();
+    Serial.printf("[SERVO] Moving to %d degrees\n", servo_target_angle);
+}
+
+void updateServo() {
+    // Non-blocking servo state machine - call this in loop()
+    // Also keeps WebSocket alive during servo movement
+    wsClient.loop();  // Keep WebSocket connection alive
+
+    if (servo_state == SERVO_IDLE) {
+        return;
+    }
+
+    unsigned long elapsed = millis() - servo_action_start;
+
+    switch (servo_state) {
+        case SERVO_MOVING:
+            // Wait 2 seconds at target position
+            if (elapsed >= 2000) {
+                myServo.write(90);  // Return to center
+                servo_state = SERVO_RETURNING;
+                servo_action_start = millis();
+                Serial.println("[SERVO] Returning to center");
+            }
+            break;
+
+        case SERVO_RETURNING:
+            // Wait for return to complete
+            if (elapsed >= 500) {
+                servo_state = SERVO_IDLE;
+                Serial.println("[SERVO] Movement complete");
+            }
+            break;
+
+        default:
+            servo_state = SERVO_IDLE;
+            break;
+    }
+}
+
+// ════════════════════════════════════════════════════════════════
+// QR Bitmap Rendering
+// ════════════════════════════════════════════════════════════════
+void renderQrDisplay() {
+    if (!oled_initialized || !qr_bitmap_ready) return;
+
+    display.clearDisplay();
+
+    // Calculate QR position (centered horizontally)
+    int qr_width = 64;
+    int qr_height = 64;
+    int qr_x = (OLED_WIDTH - qr_width) / 2;  // Center: (128-64)/2 = 32
+    int qr_y = 0;  // Top of display
+
+    // Draw QR bitmap (1-bit per pixel, 8 pixels per byte)
+    for (int y = 0; y < qr_height; y++) {
+        for (int x = 0; x < qr_width; x++) {
+            int byte_index = (y * qr_width + x) / 8;
+            int bit_index = (y * qr_width + x) % 8;
+
+            // Check if pixel is set (MSB first in each byte)
+            if (qr_bitmap[byte_index] & (1 << (7 - bit_index))) {
+                display.drawPixel(qr_x + x, qr_y + y, SSD1306_WHITE);
+            }
+        }
+    }
+
+    // Draw points text below QR
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, qr_height + 2);
+    display.printf("Points: %u", qr_points);
+
+    // Timer will be updated separately
+    display.display();
+}
+
+void updateTimerDisplay(int seconds_remaining) {
+    if (!oled_initialized || current_state != DISPLAY_QR_ACTIVE) return;
+
+    // Only update the timer line (row 56-64)
+    display.fillRect(0, 56, OLED_WIDTH, 8, SSD1306_BLACK);  // Clear timer area
+    display.setCursor(0, 56);
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.printf("Timer: %02d", seconds_remaining);
+    display.display();
+}
+
+// For testing only - call in setup() to verify OLED rendering
+void testOledBitmap() {
+    if (!oled_initialized) return;
+
+    // Create checkerboard test pattern
+    for (int i = 0; i < QR_BITMAP_SIZE; i++) {
+        qr_bitmap[i] = (i % 2 == 0) ? 0xAA : 0x55;  // Alternating pattern
+    }
+    qr_bitmap_ready = true;
+    qr_points = 100;
+    current_state = DISPLAY_QR_ACTIVE;
+    renderQrDisplay();
+    Serial.println("[OLED] Test pattern displayed");
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -202,6 +489,9 @@ void sendDetection(const char* label, float confidence) {
 
     esp_camera_fb_return(fb);   // return PSRAM buffer ASAP
     http.end();
+
+    // ── Keep WebSocket alive after HTTP ───────────────────────────
+    wsClient.loop();  // Process any pending WebSocket messages
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -223,6 +513,23 @@ void setup() {
         ei_printf("[OK]  Camera ready\r\n");
     }
 
+    // ── Initialize SSD1306 OLED ────────────────────────────────────
+    Wire.begin(OLED_SDA_PIN, OLED_SCL_PIN);
+
+    if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
+        Serial.println("[OLED] SSD1306 initialization failed");
+        oled_initialized = false;
+    } else {
+        oled_initialized = true;
+        display.clearDisplay();
+        display.setTextSize(1);
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(0, 0);
+        display.println("Smart Bin Ready");
+        display.display();
+        Serial.println("[OLED] SSD1306 initialized");
+    }
+
     connectWiFi();
 
     wsClient.begin(SERVER_HOST, WS_PORT, WS_PATH, "");
@@ -238,6 +545,7 @@ void setup() {
 // ════════════════════════════════════════════════════════════════
 void loop() {
     wsClient.loop();
+    updateServo();  // Non-blocking servo state machine
 
     static unsigned long lastLog = 0;
     if (millis() - lastLog >= 5000) {
@@ -246,6 +554,47 @@ void loop() {
             WiFi.status() == WL_CONNECTED ? "OK" : "LOST",
             ws_connected ? "YES" : "NO",
             ESP.getFreeHeap());
+    }
+
+    // ── Track WebSocket connection changes ───────────────────────────
+    if (ws_connected != last_ws_connected) {
+        last_ws_connected = ws_connected;
+        if (ws_connected) {
+            // Reconnected
+            if (current_state == DISPLAY_ERROR) {
+                current_state = DISPLAY_IDLE;
+                displayText("Connected!", "Ready for next");
+                connection_display_time = millis();
+            }
+        } else {
+            // Disconnected
+            displayConnectionError();
+        }
+    }
+
+    // ── Transition "Connected!" → "Ready for next item" after 2s ───────
+    if (ws_connected && current_state == DISPLAY_IDLE && connection_display_time > 0) {
+        if (millis() - connection_display_time >= 2000) {
+            displayText("Ready for", "next item");
+            connection_display_time = 0;  // Stop transitioning
+        }
+    }
+
+    // ── Update timer countdown every second ─────────────────────────
+    if (current_state == DISPLAY_QR_ACTIVE && qr_bitmap_ready) {
+        unsigned long elapsed = (millis() - qr_timer_start) / 1000;
+        int remaining = 30 - elapsed;
+
+        if (remaining <= 0) {
+            // Timer expired - clear QR immediately (don't wait for server)
+            handleTimerExpired();
+        } else {
+            static unsigned long last_timer_update = 0;
+            if (millis() - last_timer_update >= 1000) {
+                last_timer_update = millis();
+                updateTimerDisplay(remaining);
+            }
+        }
     }
 
     if (ei_sleep(5) != EI_IMPULSE_OK) return;
@@ -303,17 +652,8 @@ void loop() {
         // snapshot_buf is already NULL here — safe to upload
         sendDetection(bb.label, bb.value);
 
-        // Actuate servo
-        String lbl = String(bb.label);
-        if (lbl == "paper") {
-            myServo.write(0);
-            delay(2000);
-            myServo.write(90);
-        } else if (lbl == "can") {
-            myServo.write(180);
-            delay(2000);
-            myServo.write(90);
-        }
+        // Actuate servo (non-blocking)
+        triggerServo(bb.label);
     }
 
 #else
