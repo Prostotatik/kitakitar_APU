@@ -1,7 +1,7 @@
 <div align="center">
 
 # ♻️ KitaKitar
-### *AI-Powered Recycling Ecosystem for Smarter Waste Sorting, Rewards & Climate Action*
+### *An AI-Powered Recycling Game: Sort Smarter, Earn Points, and Drive Climate Action*
 
 <p align="center">
   <img src="https://img.shields.io/badge/Flutter-Mobile%20%2B%20Web-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
@@ -22,7 +22,7 @@
 ---
 
 ### 🌍 *KitaKitar* means **“We Recycle”** in Malay  
-An AI-first platform that helps people **identify waste, recycle correctly, find nearby centers, and get rewarded** for taking climate-positive action.
+An AI-driven platform that turns climate action into a **rewarding game—scan your waste, hit the nearest recycling hub, and earn points** to unlock real-world rewards.
 
 </div>
 
@@ -652,9 +652,70 @@ flutter run -d chrome
 
 ---
 
-# 9) Smart Bin Server (Optional)
+# 9) Smart Bin (Optional)
 
 The `smart_bin/` system supports **camera capture → classification → QR generation**.
+
+### Required Components
+
+- `ESP32 Cam`
+- `ESP32 Cam Mother Board`
+- `Servo Motor`
+- `SSD1306 OLED 0.96`
+- `Jumper Wires`
+- `Type C Cable`
+
+### Hardware Configuration
+
+| ESP32-CAM | Servo wire |
+|-----------|---------|
+| GPIO 12 Pin | Yellow / Orange Wire |
+| 5V Pin | Red Wire |
+| GND pin | Brown / Black Wire |
+
+| ESP32-CAM | SSD1306 OLED 0.96 |
+|-----------|---------|
+| GND Pin | GND Pin |
+| 3.3V Pin | VCC Pin |
+| GPIO 15 Pin | SCL Pin |
+| GPIO 14 Pin | SDA Pin |
+
+### Required Prerequisites - Firebase Credentials (.json file)
+
+1. Go to **Firebase Console**
+2. Select your project
+3. Open settings
+4. Project Settings → Service accounts
+5. Generate key (Click **“Generate new private key”**)
+6. Download file
+You will get a .json file like **"kitakitar-smart-bin-firebase-adminsdk-abcde-1234567890.json"**, this is your Firebase Credentials.
+
+### Arduino IDE Setup Guide
+
+## ESP32 Environment
+1. Open **Arduino IDE**
+2. Go to **File → Preferences**
+3. Add these two URLs to **Additional Boards Manager URLs**:
+   ```
+   https://dl.espressif.com/dl/package_esp32_index.json
+   https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+   ```
+4. Go to **Tools → Board → Boards Manager...**
+5. Search for **“esp32”** and install the latest version by Espressif Systems
+
+## Customize Library
+1. Open **Arduino IDE**
+2. Go to **Sketch → Include Library → Add .ZIP Library...**
+3. Select `smart_bin/ei-kitakitar-arduino-1.0.1.zip`
+
+## General Library
+1. Open **Arduino IDE**
+2. Go to **Sketch → Include Library → Manage Libraries...**
+3. Search for **"ESP32Servo"** by Kevin Harrington, John K. Bennett and install it
+4. Search for **"WebSockets"** by Markus Sattler and install it
+5. Search for **"ArduinoJson"** by Benoit Blanchon and install it
+6. Search for **"Adafruit SSD1306"** by Adafruit and install it
+7. Search for **"Adafruit GFX Library"** by Adafruit and install it
 
 ### Install Python dependencies
 ```bash
@@ -662,28 +723,23 @@ cd smart_bin
 pip install -r requirements.txt
 ```
 
-### Required environment variables
-
-| Variable | Purpose |
-|----------|---------|
-| `FIREBASE_SERVICE_ACCOUNT` or `GOOGLE_APPLICATION_CREDENTIALS` | Path to Firebase service account JSON |
-| `SMART_BIN_CENTER_ID` | Firestore center document ID |
-
 ### Run
+
+1. Change your **file location** for your Firebase Credentials (*Line 63* in `smart_bin/server.py`)
+2. Change your **Wifi Name****** (*Line 78* in `smart_bin/smart_bin.ino`)
+3. Change your **Wifi Password** (*Line 79* in `smart_bin/smart_bin.ino`)
+4. Change your **PC's LAN IP** (*Line 80* in `smart_bin/smart_bin.ino`)
+5. Connect your **PC** and **ESP32 Cam** using *Type C Cable*
+6. Open **Arduino IDE**
+7. Go to Tools → Board → esp32 → **AI Thinker ESP32-CAM**
+8. Choose your own **Port**
+9. Click **Upload** button
+10. After done uploading, click the **Reset** button on ESP32 Cam or ESP32 Cam Mother Board
+11. Go to Tools → Serial Monitor (115200 baud)
+12. 
 ```bash
+cd smart_bin
 python server.py
-```
-
-### Smart Bin Output
-A successful `POST /upload` may return:
-
-- `qr.id`
-- `qr.payload`
-- `qr.png_base64`
-
-Example payload:
-```text
-KITAKITAR_QR:<id>
 ```
 
 ### Material Mapping
@@ -886,10 +942,10 @@ That makes it a strong example of a project at the intersection of:
 
 <div align="center">
 
-## ♻️ Build better recycling habits.  
-## 🌍 Reduce waste.  
-## 🤖 Let AI make sustainability easier.
+## ♻️ Gamify your routine and build lasting recycling habits.  
+## 🌍 Turn reducing waste into a winning streak.  
+## 🤖 Let AI do the sorting while you rack up the rewards.
 
-**KitaKitar — We Recycle. Together.**
+**KitaKitar — KitaKitar — Gamifying How We Recycle. Together.**
 
 </div>
