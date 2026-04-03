@@ -60,7 +60,7 @@ KITAKITAR_QR_PREFIX = "KITAKITAR_QR:"
 # Hard‑wired Firebase center / credentials for this smart bin
 SMART_BIN_CENTER_ID = "gwTyIuDCyDQtMdJIWbfoDYIVj0l1"
 FIREBASE_SERVICE_ACCOUNT = (
-    r"C:\Users\User\Downloads\kitakitar_APU\smart_bin\kitakitar-firebase-adminsdk-fbsvc-4a3db70058.json"
+    r"YOUR PATH HERE\kitakitar-smart-bin-firebase-adminsdk-abcde-1234567890.json"
 )
 
 # Model label -> (Firestore material type, weight kg) — mirrors center_web createIntakeQr

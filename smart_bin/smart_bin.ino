@@ -75,9 +75,9 @@ StaticJsonDocument<4096> jsonDoc;  // Large enough for QR bitmap array
 #define CAMERA_MODEL_AI_THINKER
 
 // ── WiFi / Server config  (edit these) ──────────────────────────
-const char* WIFI_SSID     = "LEE_WIFI_2.40GHz";
-const char* WIFI_PASSWORD = "Robert0163303567#";
-const char* SERVER_HOST   = "192.168.0.130";   // PC's LAN IP
+const char* WIFI_SSID     = "YOUR WIFI";
+const char* WIFI_PASSWORD = "YOUR PASSWORD";
+const char* SERVER_HOST   = "YOUR PC's LAN IP";
 const int   WS_PORT       = 8765;             // WebSocket metadata
 const int   HTTP_PORT     = 8766;             // HTTP photo upload
 const char* WS_PATH       = "/";
