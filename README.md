@@ -63,6 +63,10 @@ An AI-driven platform that turns climate action into a **rewarding game—scan y
 |------------------|----------------------|
 | ![bin](https://placehold.co/600x350?text=ESP32-CAM+Smart+Bin) | ![qr](https://placehold.co/600x350?text=QR+Reward+Flow) |
 
+### KitaKitar Demo Video
+
+[![KitaKitar Demo Video](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fyoutu.be%2F47avtMvRYpY)](https://youtu.be/47avtMvRYpY)
+
 ---
 
 # 🧠 Why This Matters
@@ -654,7 +658,7 @@ flutter run -d chrome
 
 # 9) Smart Bin (Optional)
 
-The `smart_bin/` system supports **camera capture → classification → QR generation**.
+The `smart_bin/` system supports **camera capture → classification → QR generation**. People can dispose of recyclables at a shared bin that **recognizes items**, logs the intake, and **issues a reward QR** linked to Firebase—so earning points in the game does not depend on queuing at a desk or filling forms. By turning a ordinary street or campus facility into a **fast, frictionless “play surface”** for the same scan–earn–leaderboard loop as the app, it lowers effort at the moment of action and **reinforces the habit**; we believe that seamless, visible rewards at the bin will keep users coming back and make the experience feel **effortless and compelling**—the kind of smooth, repeatable win that strong games use to deepen engagement.
 
 ### Required Components
 
