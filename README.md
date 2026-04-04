@@ -688,6 +688,7 @@ The `smart_bin/` system supports **camera capture → classification → QR gene
 4. Project Settings → Service accounts
 5. Generate key (Click **“Generate new private key”**)
 6. Download file
+
 You will get a .json file like **"kitakitar-smart-bin-firebase-adminsdk-abcde-1234567890.json"**, this is your Firebase Credentials.
 
 ### Arduino IDE Setup Guide
@@ -700,8 +701,9 @@ You will get a .json file like **"kitakitar-smart-bin-firebase-adminsdk-abcde-12
    https://dl.espressif.com/dl/package_esp32_index.json
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
-4. Go to **Tools → Board → Boards Manager...**
-5. Search for **“esp32”** and install the latest version by Espressif Systems
+4. Click "OK" button → "OK" button
+5. Go to **Tools → Board → Boards Manager...**
+6. Search for **“esp32”** and install the latest version by Espressif Systems
 
 ## Customize Library
 1. Open **Arduino IDE**
@@ -946,6 +948,6 @@ That makes it a strong example of a project at the intersection of:
 ## 🌍 Turn reducing waste into a winning streak.  
 ## 🤖 Let AI do the sorting while you rack up the rewards.
 
-**KitaKitar — KitaKitar — Gamifying How We Recycle. Together.**
+**KitaKitar — Gamifying How We Recycle. Together.**
 
 </div>
