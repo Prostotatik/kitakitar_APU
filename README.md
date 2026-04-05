@@ -732,7 +732,7 @@ pip install -r requirements.txt
 ### Run
 
 1. Change your **file location** for your Firebase Credentials (*Line 63* in `smart_bin/server.py`)
-2. Change your **Wifi Name****** (*Line 78* in `smart_bin/smart_bin.ino`)
+2. Change your **Wifi Name** (*Line 78* in `smart_bin/smart_bin.ino`)
 3. Change your **Wifi Password** (*Line 79* in `smart_bin/smart_bin.ino`)
 4. Change your **PC's LAN IP** (*Line 80* in `smart_bin/smart_bin.ino`)
 5. Connect your **PC** and **ESP32 Cam** using *Type C Cable*
@@ -747,6 +747,7 @@ pip install -r requirements.txt
 cd smart_bin
 python server.py
 ```
+13. Now your KitaKitar Smart Bin is ready!
 
 ### Material Mapping
 - `can` → stored as **aluminum**, weight = **0.015 kg**
