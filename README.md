@@ -21,7 +21,7 @@
 
 ---
 
-### 🌍 *KitaKitar* means **“We Recycle”** in Malay  
+### 🌍 *KitaKitar* means **“We Recycle”** in Bahasa Malaysia 
 An AI-driven platform that turns climate action into a **rewarding game—scan your waste, hit the nearest recycling hub, and earn points** to unlock real-world rewards.
 
 </div>
