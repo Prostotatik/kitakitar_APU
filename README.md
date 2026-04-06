@@ -37,7 +37,7 @@ An AI-driven platform that turns climate action into a **rewarding game—scan y
 - **Accessible** → find nearby recycling centers instantly
 - **Motivating** → earn points and compete on leaderboards
 - **Scalable** → centers manage operations through a dedicated web panel
-- **Innovative** → optional **smart bin + QR redemption workflow**
+- **Innovative** → **smart bin + QR redemption workflow**
 
 > 💡 The idea is simple:  
 > If people recycle less because it’s **confusing, inconvenient, and unrewarding**, then KitaKitar turns it into a **guided, gamified, AI-assisted experience**.
@@ -71,7 +71,7 @@ An AI-driven platform that turns climate action into a **rewarding game—scan y
 |-----------|-------------------|--------------|
 | ![dashboard](readme_assets/screenshot_dashboard.png) | ![center](readme_assets/screenshot_management.png) | ![transactions](readme_assets/screenshot_transactions.png) |
 
-## Smart Bin (Optional)
+## Smart Bin
 <div align="center">
   <table>
     <tr>
@@ -171,7 +171,7 @@ The operations layer for recycling centers.
 
 ---
 
-## 3) 🤖 Smart Bin System (`smart_bin/`) *(Optional)*
+## 3) 🤖 Smart Bin System (`smart_bin/`)
 An IoT-assisted workflow for automated intake.
 
 ### Key capabilities
@@ -678,7 +678,7 @@ flutter run -d chrome
 
 ---
 
-# 9) Smart Bin (Optional)
+# 9) Smart Bin
 
 The `smart_bin/` system supports **camera capture → classification → QR generation**. People can dispose of recyclables at a shared bin that **recognizes items**, logs the intake, and **issues a reward QR** linked to Firebase—so earning points in the game does not depend on queuing at a desk or filling forms. By turning a ordinary street or campus facility into a **fast, frictionless “play surface”** for the same scan–earn–leaderboard loop as the app, it lowers effort at the moment of action and **reinforces the habit**; we believe that seamless, visible rewards at the bin will keep users coming back and make the experience feel **effortless and compelling**—the kind of smooth, repeatable win that strong games use to deepen engagement.
 
@@ -946,7 +946,7 @@ It combines:
 - **behavioral incentives**
 - **location intelligence**
 - **admin operations**
-- **optional IoT hardware**
+- **IoT hardware**
 
 That makes it a strong example of a project at the intersection of:
 

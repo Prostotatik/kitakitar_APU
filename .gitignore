@@ -62,3 +62,6 @@ smart_bin/*.service-account.json
 .fleet/
 .cursorignore
 can.jpg
+
+idea.md
+web-reference
