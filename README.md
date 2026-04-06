@@ -46,22 +46,44 @@ An AI-first platform that helps people **identify waste, recycle correctly, find
 
 # 📸 Product Preview
 
-> Replace these placeholders with screenshots / GIFs later.
+> Real screenshots from the current build.
 
 ## Mobile App
-| Scan Waste | AI Chat | Nearby Centers | Leaderboard |
-|-----------|---------|----------------|-------------|
-| ![scan](https://placehold.co/300x600?text=Scan+Screen) | ![chat](https://placehold.co/300x600?text=AI+Chat) | ![map](https://placehold.co/300x600?text=Map+Screen) | ![leaders](https://placehold.co/300x600?text=Leaderboard) |
+<div align="center">
+  <table>
+    <tr>
+      <th>Scan Waste</th>
+      <th>AI Chat</th>
+      <th>Nearby Centers</th>
+      <th>Leaderboard</th>
+    </tr>
+    <tr>
+      <td align="center"><img src="readme_assets/screenshot_scan.png" alt="scan" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_aichat.png" alt="chat" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/screenshot_map.png" alt="map" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/screenshot_leaderboard.png" alt="leaders" style="width:240px;height:auto;" /></td>
+    </tr>
+  </table>
+</div>
 
 ## Admin / Center Web Panel
 | Dashboard | Center Management | Transactions |
 |-----------|-------------------|--------------|
-| ![dashboard](https://placehold.co/600x350?text=Center+Dashboard) | ![center](https://placehold.co/600x350?text=Center+Settings) | ![transactions](https://placehold.co/600x350?text=Transactions) |
+| ![dashboard](readme_assets/screenshot_dashboard.png) | ![center](readme_assets/screenshot_management.png) | ![transactions](readme_assets/screenshot_transactions.png) |
 
 ## Smart Bin (Optional)
-| ESP32-CAM Intake | QR Reward Generation |
-|------------------|----------------------|
-| ![bin](https://placehold.co/600x350?text=ESP32-CAM+Smart+Bin) | ![qr](https://placehold.co/600x350?text=QR+Reward+Flow) |
+<div align="center">
+  <table>
+    <tr>
+      <th>ESP32-CAM Intake</th>
+      <th>QR Reward Generation</th>
+    </tr>
+    <tr>
+      <td align="center"><img src="readme_assets/screenshot_smartbin.png" alt="bin" style="width:420px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/screenshot_reward.png" alt="qr" style="width:420px;height:auto;" /></td>
+    </tr>
+  </table>
+</div>
 
 ---
 
