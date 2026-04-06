@@ -14,6 +14,7 @@ import 'providers/center_auth_provider.dart';
 import 'providers/center_data_provider.dart';
 import 'services/center_firestore_service.dart';
 import 'widgets/address_map_picker.dart';
+import 'theme/cyberpunk_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,59 +37,8 @@ class CenterWebApp extends StatelessWidget {
       child: MaterialApp(
         title: 'KitaKitar Center',
         debugShowCheckedModeBanner: false,
-        theme: _buildTheme(Brightness.light),
-        darkTheme: _buildTheme(Brightness.dark),
+        theme: buildCyberpunkTheme(),
         home: const _RootShell(),
-      ),
-    );
-  }
-
-  ThemeData _buildTheme(Brightness brightness) {
-    // Match mobile app branding: green primary (0xFF4CAF50).
-    const primary = Color(0xFF4CAF50);
-    const secondary = Color(0xFF2E7D32);
-    const surfaceLight = Color(0xFFF8FAFC);
-    const onSurfaceLight = Color(0xFF1E293B);
-
-    final isLight = brightness == Brightness.light;
-    final base = ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primary,
-        primary: primary,
-        secondary: secondary,
-        brightness: brightness,
-        surface: isLight ? surfaceLight : const Color(0xFF1E293B),
-        onSurface: isLight ? onSurfaceLight : const Color(0xFFF1F5F9),
-      ),
-      useMaterial3: true,
-    );
-
-    return base.copyWith(
-      scaffoldBackgroundColor: isLight
-          ? const Color(0xFFF0FDF4)
-          : const Color(0xFF0F172A),
-      colorScheme: base.colorScheme.copyWith(
-        surface: isLight ? surfaceLight : const Color(0xFF1E293B),
-        onSurface: isLight ? onSurfaceLight : const Color(0xFFF1F5F9),
-      ),
-      textTheme: base.textTheme.apply(
-        fontFamily: 'Roboto',
-        bodyColor: isLight ? onSurfaceLight : const Color(0xFFF1F5F9),
-        displayColor: isLight ? onSurfaceLight : const Color(0xFFF1F5F9),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        filled: true,
-        fillColor: isLight ? Colors.white : const Color(0xFF334155),
-      ),
-      cardTheme: CardThemeData(
-        color: isLight ? Colors.white : const Color(0xFF1E293B),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
       ),
     );
   }
@@ -201,21 +151,16 @@ class _LoginPageState extends State<LoginPage> {
     final auth = Provider.of<CenterAuthProvider>(context);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF4CAF50), Color(0xFF2E7D32), Color(0xFF1B5E20)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+      body: CircuitGridBackground(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
-            child: Card(
-              elevation: 16,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+            child: Container(
+              decoration: BoxDecoration(
+                color: CyberpunkColors.backgroundMoss,
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(color: CyberpunkColors.neonGreen, width: 2),
+                boxShadow: CyberpunkGlow.greenGlow(intensity: 0.5),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -223,15 +168,14 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const _LogoHeader(
-                      title: 'KitaKitar Center',
-                      subtitle: 'Admin panel for recycling centers',
+                    const _CyberpunkLogoHeader(
+                      title: 'KITAKITAR CENTER',
+                      subtitle: 'ADMIN PANEL // RECYCLING OPS',
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Log in to your center',
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      'LOG IN TO YOUR CENTER',
+                      style: CyberpunkText.pixelHeading(fontSize: 10, color: CyberpunkColors.electricLime),
                     ),
                     const SizedBox(height: 12),
                     _EmailField(controller: _emailController),
@@ -246,35 +190,37 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    FilledButton(
+                    NeonButton(
+                      label: 'SIGN IN',
                       onPressed: auth.isLoading ? null : _handleLogin,
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: auth.isLoading
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Sign in'),
+                      isLoading: auth.isLoading,
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: widget.onGoToForgot,
-                      child: const Text('Forgot password?'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: CyberpunkColors.electricLime,
+                      ),
+                      child: const Text('FORGOT PASSWORD?'),
                     ),
-                    const Divider(height: 32),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 16),
+                      height: 1,
+                      color: CyberpunkColors.amberMoss,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have a center yet?"),
+                        Text(
+                          "NO CENTER ACCOUNT? ",
+                          style: CyberpunkText.bodyText(fontSize: 12, color: CyberpunkColors.textSecondary),
+                        ),
                         TextButton(
                           onPressed: widget.onGoToRegister,
-                          child: const Text('Create account'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: CyberpunkColors.neonGreen,
+                          ),
+                          child: const Text('CREATE ONE'),
                         ),
                       ],
                     ),
@@ -473,21 +419,16 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF4CAF50), Color(0xFF2E7D32), Color(0xFF1B5E20)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+      body: CircuitGridBackground(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 960),
-            child: Card(
-              elevation: 16,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+            child: Container(
+              decoration: BoxDecoration(
+                color: CyberpunkColors.backgroundMoss,
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(color: CyberpunkColors.neonGreen, width: 2),
+                boxShadow: CyberpunkGlow.greenGlow(intensity: 0.3),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -500,35 +441,37 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const _LogoHeader(
-                              title: 'Register center',
-                              subtitle:
-                                  'Join KitaKitar network and start accepting recyclable materials.',
+                            const _CyberpunkLogoHeader(
+                              title: 'REGISTER CENTER',
+                              subtitle: 'JOIN THE KITAKITAR NETWORK',
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Why join?',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              'WHY JOIN?',
+                              style: CyberpunkText.pixelHeading(
+                                fontSize: 10,
+                                color: CyberpunkColors.electricLime,
+                              ),
                             ),
                             const SizedBox(height: 8),
-                            const _BulletPoint(
-                              text:
-                                  'Configure accepted materials, weight ranges and pricing.',
+                            const _CyberpunkBulletPoint(
+                              text: 'CONFIGURE MATERIALS, WEIGHT & PRICING',
                             ),
-                            const _BulletPoint(
-                              text:
-                                  'Generate one-time QR codes for every accepted load.',
+                            const _CyberpunkBulletPoint(
+                              text: 'GENERATE ONE-TIME QR CODES PER LOAD',
                             ),
-                            const _BulletPoint(
-                              text:
-                                  'Track statistics and points for your center in real time.',
+                            const _CyberpunkBulletPoint(
+                              text: 'TRACK STATS & POINTS IN REAL TIME',
                             ),
                           ],
                         ),
                       ),
                     ),
-                    const VerticalDivider(width: 1),
+                    Container(
+                      width: 1,
+                      height: 200,
+                      color: CyberpunkColors.amberMoss,
+                    ),
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.only(left: 24),
@@ -537,14 +480,16 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              'Center details',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              'CENTER DETAILS',
+                              style: CyberpunkText.pixelHeading(
+                                fontSize: 10,
+                                color: CyberpunkColors.electricLime,
+                              ),
                             ),
                             const SizedBox(height: 12),
-                            _LabeledTextField(
+                            _CyberpunkLabeledField(
                               controller: _centerNameController,
-                              label: 'Center name',
+                              label: 'CENTER NAME',
                               hint: 'Green Earth Recycling',
                             ),
                             const SizedBox(height: 16),
@@ -559,25 +504,27 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Manager',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              'MANAGER',
+                              style: CyberpunkText.pixelHeading(
+                                fontSize: 10,
+                                color: CyberpunkColors.electricLime,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             Row(
                               children: [
                                 Expanded(
-                                  child: _LabeledTextField(
+                                  child: _CyberpunkLabeledField(
                                     controller: _managerNameController,
-                                    label: 'Name',
+                                    label: 'NAME',
                                     hint: 'John Smith',
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: _LabeledTextField(
+                                  child: _CyberpunkLabeledField(
                                     controller: _managerPhoneController,
-                                    label: 'Phone',
+                                    label: 'PHONE',
                                     hint: '+60 12-345 6789',
                                   ),
                                 ),
@@ -585,15 +532,18 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Accepted materials',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              'ACCEPTED MATERIALS',
+                              style: CyberpunkText.pixelHeading(
+                                fontSize: 10,
+                                color: CyberpunkColors.electricLime,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Select types and set min/max weight (kg) and price per kg (0 = free).',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: Colors.grey.shade600,
+                              'Select types • Set min/max weight (kg) • Price per kg',
+                              style: CyberpunkText.bodyText(
+                                fontSize: 11,
+                                color: CyberpunkColors.textSecondary,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -604,7 +554,7 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
                               final params = _materials[type] ?? (minKg: 0.5, maxKg: 100.0, pricePerKg: 0.0);
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
-                                child: _MaterialRow(
+                                child: _CyberpunkMaterialRow(
                                   icon: getMaterialIcon(type),
                                   label: label,
                                   selected: isSelected,
@@ -643,46 +593,45 @@ class _RegisterCenterPageState extends State<RegisterCenterPage> {
                             }),
                             const SizedBox(height: 16),
                             Text(
-                              'Account',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              'ACCOUNT',
+                              style: CyberpunkText.pixelHeading(
+                                fontSize: 10,
+                                color: CyberpunkColors.electricLime,
+                              ),
                             ),
                             const SizedBox(height: 12),
-                            _LabeledTextField(
+                            _CyberpunkLabeledField(
                               controller: _emailController,
-                              label: 'Email',
+                              label: 'EMAIL',
                               hint: 'center@example.com',
                             ),
                             const SizedBox(height: 12),
-                            _LabeledTextField(
+                            _CyberpunkLabeledField(
                               controller: _passwordController,
-                              label: 'Password',
+                              label: 'PASSWORD',
                               hint: '••••••••',
                               obscure: true,
                             ),
                             const SizedBox(height: 12),
-                            _LabeledTextField(
+                            _CyberpunkLabeledField(
                               controller: _confirmPasswordController,
-                              label: 'Confirm password',
+                              label: 'CONFIRM PASSWORD',
                               hint: '••••••••',
                               obscure: true,
                             ),
                             const SizedBox(height: 20),
-                            FilledButton(
+                            NeonButton(
+                              label: 'CREATE CENTER ACCOUNT',
                               onPressed: _isSubmitting ? null : _submit,
-                              style: FilledButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: const Text('Create center account'),
+                              isLoading: _isSubmitting,
                             ),
                             const SizedBox(height: 12),
                             TextButton(
                               onPressed: widget.onGoToLogin,
-                              child: const Text('Already have account? Log in'),
+                              style: TextButton.styleFrom(
+                                foregroundColor: CyberpunkColors.electricLime,
+                              ),
+                              child: const Text('ALREADY HAVE ACCOUNT? LOG IN'),
                             ),
                           ],
                         ),
@@ -710,21 +659,16 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF4CAF50), Color(0xFF2E7D32), Color(0xFF1B5E20)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+      body: CircuitGridBackground(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
-            child: Card(
-              elevation: 16,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+            child: Container(
+              decoration: BoxDecoration(
+                color: CyberpunkColors.backgroundMoss,
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(color: CyberpunkColors.neonGreen, width: 2),
+                boxShadow: CyberpunkGlow.greenGlow(intensity: 0.5),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -732,36 +676,34 @@ class ForgotPasswordPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const _LogoHeader(
-                      title: 'Reset password',
-                      subtitle:
-                          'Enter your email, we will send reset instructions.',
+                    const _CyberpunkLogoHeader(
+                      title: 'RESET PASSWORD',
+                      subtitle: 'ENTER EMAIL FOR RESET LINK',
                     ),
                     const SizedBox(height: 24),
                     const _EmailField(),
                     const SizedBox(height: 20),
-                    FilledButton(
+                    NeonButton(
+                      label: 'SEND RESET LINK',
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              'If an account exists, reset link will be sent.',
+                              'IF ACCOUNT EXISTS, RESET LINK WILL BE SENT',
+                              style: CyberpunkText.bodyText(),
                             ),
+                            backgroundColor: CyberpunkColors.backgroundMoss,
                           ),
                         );
                       },
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text('Send reset link'),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: onBackToLogin,
-                      child: const Text('Back to login'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: CyberpunkColors.electricLime,
+                      ),
+                      child: const Text('BACK TO LOGIN'),
                     ),
                   ],
                 ),
@@ -856,14 +798,14 @@ class _Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 260,
-      color: Theme.of(context).colorScheme.surface,
+      color: CyberpunkColors.backgroundDeep,
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: Colors.grey.shade200),
+                bottom: BorderSide(color: CyberpunkColors.neonGreen, width: 1),
               ),
             ),
             child: Row(
@@ -872,14 +814,14 @@ class _Sidebar extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
-                    ),
+                    color: CyberpunkColors.backgroundJungle,
+                    borderRadius: BorderRadius.circular(2),
+                    border: Border.all(color: CyberpunkColors.neonGreen, width: 1),
+                    boxShadow: CyberpunkGlow.greenGlow(intensity: 0.3),
                   ),
                   child: const Icon(
-                    Icons.loop_rounded,
-                    color: Colors.white,
+                    Icons.recycling_rounded,
+                    color: CyberpunkColors.neonGreen,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -887,16 +829,12 @@ class _Sidebar extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'KitaKitar',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      'KITAKITAR',
+                      style: CyberpunkText.pixelHeading(fontSize: 10, color: CyberpunkColors.neonGreen),
                     ),
                     Text(
-                      'Center admin',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                      'CENTER ADMIN',
+                      style: CyberpunkText.pixelLabel(fontSize: 6, color: CyberpunkColors.electricLime),
                     ),
                   ],
                 ),
@@ -907,52 +845,52 @@ class _Sidebar extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(12),
               children: [
-                _SidebarItem(
+                _CyberpunkSidebarItem(
                   icon: Icons.space_dashboard_outlined,
-                  label: 'Dashboard',
+                  label: 'DASHBOARD',
                   selected: current == _DashboardPage.dashboard,
                   onTap: () => onSelect(_DashboardPage.dashboard),
                 ),
-                _SidebarItem(
+                _CyberpunkSidebarItem(
                   icon: Icons.storefront_outlined,
-                  label: 'Center profile',
+                  label: 'CENTER PROFILE',
                   selected: current == _DashboardPage.profile,
                   onTap: () => onSelect(_DashboardPage.profile),
                 ),
-                _SidebarItem(
+                _CyberpunkSidebarItem(
                   icon: Icons.add_circle_outline,
-                  label: 'New intake',
+                  label: 'NEW INTAKE',
                   selected: current == _DashboardPage.newIntake,
                   onTap: () => onSelect(_DashboardPage.newIntake),
                 ),
-                _SidebarItem(
+                _CyberpunkSidebarItem(
                   icon: Icons.qr_code_2_outlined,
-                  label: 'QR codes',
+                  label: 'QR CODES',
                   selected: current == _DashboardPage.qrCodes,
                   onTap: () => onSelect(_DashboardPage.qrCodes),
                 ),
-                _SidebarItem(
+                _CyberpunkSidebarItem(
                   icon: Icons.history_rounded,
-                  label: 'History',
+                  label: 'HISTORY',
                   selected: current == _DashboardPage.history,
                   onTap: () => onSelect(_DashboardPage.history),
                 ),
               ],
             ),
           ),
+          const ArcadeHudBar(
+            leftText: '♻ ECO',
+            centerText: 'LEVEL 1',
+            rightText: '2077',
+          ),
           Padding(
             padding: const EdgeInsets.all(12),
-            child: OutlinedButton.icon(
+            child: NeonButton(
+              label: 'SIGN OUT',
               onPressed: onLogout,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red.shade600,
-                side: BorderSide(color: Colors.red.shade200),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              icon: const Icon(Icons.logout_rounded),
-              label: const Text('Sign out'),
+              glowColor: CyberpunkColors.warningGlow,
+              isPrimary: false,
+              icon: Icons.logout_rounded,
             ),
           ),
           const SizedBox(height: 8),
@@ -962,8 +900,8 @@ class _Sidebar extends StatelessWidget {
   }
 }
 
-class _SidebarItem extends StatelessWidget {
-  const _SidebarItem({
+class _CyberpunkSidebarItem extends StatelessWidget {
+  const _CyberpunkSidebarItem({
     required this.icon,
     required this.label,
     required this.selected,
@@ -977,24 +915,22 @@ class _SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(2),
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(2),
             color: selected
-                ? colorScheme.primary.withOpacity(0.12)
+                ? CyberpunkColors.neonGreen.withOpacity(0.1)
                 : Colors.transparent,
             border: Border(
               left: BorderSide(
-                color: selected ? colorScheme.primary : Colors.transparent,
-                width: 3,
+                color: selected ? CyberpunkColors.neonGreen : Colors.transparent,
+                width: 2,
               ),
             ),
           ),
@@ -1003,15 +939,18 @@ class _SidebarItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                color: selected
+                    ? CyberpunkColors.neonGreen
+                    : CyberpunkColors.textSecondary,
               ),
               const SizedBox(width: 12),
               Text(
                 label,
-                style: TextStyle(
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                  color:
-                      selected ? colorScheme.primary : colorScheme.onSurface,
+                style: CyberpunkText.pixelLabel(
+                  fontSize: 8,
+                  color: selected
+                      ? CyberpunkColors.neonGreen
+                      : CyberpunkColors.textSecondary,
                 ),
               ),
             ],
@@ -1084,17 +1023,16 @@ class _DashboardPageViewState extends State<_DashboardPageView> {
 
     return Consumer<CenterDataProvider>(
       builder: (context, centerData, _) {
-        final colorScheme = Theme.of(context).colorScheme;
         if (centerData.loading && centerData.center == null) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircularProgressIndicator(),
+                const CircularProgressIndicator(color: CyberpunkColors.neonGreen),
                 const SizedBox(height: 16),
                 Text(
-                  'Loading center…',
-                  style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
+                  'LOADING CENTER...',
+                  style: CyberpunkText.pixelHeading(fontSize: 10, color: CyberpunkColors.neonGreen),
                 ),
               ],
             ),
@@ -1105,12 +1043,12 @@ class _DashboardPageViewState extends State<_DashboardPageView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 48, color: colorScheme.error),
+                const Icon(Icons.error_outline, size: 48, color: CyberpunkColors.errorGlow),
                 const SizedBox(height: 16),
                 Text(
                   centerData.error!,
                   textAlign: TextAlign.center,
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
+                  style: CyberpunkText.bodyText(color: CyberpunkColors.errorGlow),
                 ),
               ],
             ),
@@ -1124,65 +1062,68 @@ class _DashboardPageViewState extends State<_DashboardPageView> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const ArcadeHudBar(
+              leftText: '♻ DASHBOARD',
+              centerText: 'ONLINE',
+              rightText: 'ECO SYS 2077',
+            ),
+            const SizedBox(height: 16),
             Text(
-              c != null ? 'Welcome back, ${c.name}!' : 'Welcome back!',
-              style: textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
-              ),
+              c != null ? 'WELCOME BACK, ${c.name.toUpperCase()}!' : 'WELCOME BACK!',
+              style: CyberpunkText.pixelHeading(fontSize: 12, color: CyberpunkColors.neonGreen),
             ),
             const SizedBox(height: 4),
             Text(
-              'Your recycling center overview',
-              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+              'RECYCLING CENTER OVERVIEW',
+              style: CyberpunkText.pixelLabel(fontSize: 8, color: CyberpunkColors.electricLime),
             ),
             const SizedBox(height: 24),
             Wrap(
               spacing: 16,
               runSpacing: 16,
               children: [
-                _StatCard(
-                  title: 'Total intakes',
-                  value: _statsLoading ? '…' : '${_transactions.length}',
+                _CyberpunkStatCard(
+                  title: 'TOTAL INTAKES',
+                  value: _statsLoading ? '...' : '${_transactions.length}',
                   icon: Icons.insert_drive_file_outlined,
-                  color: const Color(0xFF4CAF50),
+                  color: CyberpunkColors.neonGreen,
                 ),
-                _StatCard(
-                  title: 'Total weight',
-                  value: '${weight.toStringAsFixed(1)} kg',
+                _CyberpunkStatCard(
+                  title: 'TOTAL WEIGHT',
+                  value: '${weight.toStringAsFixed(1)} KG',
                   icon: Icons.scale_outlined,
-                  color: const Color(0xFF10B981),
+                  color: CyberpunkColors.electricLime,
                 ),
-                _StatCard(
-                  title: 'Points issued',
+                _CyberpunkStatCard(
+                  title: 'POINTS ISSUED',
                   value: '$points',
                   icon: Icons.stars_rounded,
-                  color: const Color(0xFFF59E0B),
+                  color: CyberpunkColors.toxicGlow,
                 ),
-                _StatCard(
-                  title: 'Claimed QR codes',
-                  value: _statsLoading ? '…' : '$_claimedQr',
+                _CyberpunkStatCard(
+                  title: 'CLAIMED QR',
+                  value: _statsLoading ? '...' : '$_claimedQr',
                   icon: Icons.qr_code_2_outlined,
-                  color: const Color(0xFF8B5CF6),
+                  color: CyberpunkColors.infoGlow,
                 ),
               ],
             ),
             const SizedBox(height: 24),
             Expanded(
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: CyberpunkColors.backgroundMoss,
+                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(color: CyberpunkColors.neonGreen, width: 2),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-                  child: _statsLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _DailyIntakeChart(
-                          dailyCounts: _dailyCounts(),
-                          textTheme: textTheme,
-                          colorScheme: colorScheme,
-                        ),
-                ),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                child: _statsLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(color: CyberpunkColors.neonGreen),
+                      )
+                    : _CyberpunkDailyIntakeChart(
+                        dailyCounts: _dailyCounts(),
+                      ),
               ),
             ),
           ],
@@ -2829,6 +2770,100 @@ class _LogoHeader extends StatelessWidget {
   }
 }
 
+/// Cyberpunk-styled Logo Header with neon glow
+class _CyberpunkLogoHeader extends StatefulWidget {
+  const _CyberpunkLogoHeader({
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String title;
+  final String subtitle;
+
+  @override
+  State<_CyberpunkLogoHeader> createState() => _CyberpunkLogoHeaderState();
+}
+
+class _CyberpunkLogoHeaderState extends State<_CyberpunkLogoHeader>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        AnimatedBuilder(
+          animation: _pulseAnimation,
+          builder: (context, child) {
+            return Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: CyberpunkColors.backgroundJungle,
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(color: CyberpunkColors.neonGreen, width: 2),
+                boxShadow: CyberpunkGlow.greenGlow(
+                  intensity: _pulseAnimation.value,
+                ),
+              ),
+              child: const Icon(
+                Icons.recycling_rounded,
+                color: CyberpunkColors.neonGreen,
+                size: 40,
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+        Text(
+          widget.title,
+          textAlign: TextAlign.center,
+          style: CyberpunkText.pixelHeading(
+            fontSize: 14,
+            color: CyberpunkColors.neonGreen,
+            glow: true,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          widget.subtitle,
+          textAlign: TextAlign.center,
+          style: CyberpunkText.pixelLabel(
+            fontSize: 8,
+            color: CyberpunkColors.electricLime,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const ArcadeHudBar(
+          leftText: '♻ ECO SYS',
+          centerText: 'ONLINE',
+          rightText: '2077 ©',
+        ),
+      ],
+    );
+  }
+}
+
 class _EmailField extends StatelessWidget {
   const _EmailField({this.controller});
 
@@ -2939,6 +2974,222 @@ class _BulletPoint extends StatelessWidget {
   }
 }
 
+/// Cyberpunk-styled bullet point with neon check
+class _CyberpunkBulletPoint extends StatelessWidget {
+  const _CyberpunkBulletPoint({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              color: CyberpunkColors.backgroundJungle,
+              border: Border.all(color: CyberpunkColors.neonGreen, width: 1),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: const Icon(Icons.check, size: 12, color: CyberpunkColors.neonGreen),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: CyberpunkText.bodyText(fontSize: 12, color: CyberpunkColors.textPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Cyberpunk-styled labeled text field
+class _CyberpunkLabeledField extends StatelessWidget {
+  const _CyberpunkLabeledField({
+    required this.label,
+    required this.hint,
+    this.controller,
+    this.obscure = false,
+  });
+
+  final String label;
+  final String hint;
+  final TextEditingController? controller;
+  final bool obscure;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: CyberpunkText.pixelLabel(fontSize: 8, color: CyberpunkColors.electricLime),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          obscureText: obscure,
+          style: CyberpunkText.bodyText(),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: CyberpunkText.bodyText(color: CyberpunkColors.textSecondary.withOpacity(0.5)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Cyberpunk-styled material row for registration
+class _CyberpunkMaterialRow extends StatelessWidget {
+  const _CyberpunkMaterialRow({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onChanged,
+    required this.minKg,
+    required this.maxKg,
+    required this.pricePerKg,
+    required this.onMinChanged,
+    required this.onMaxChanged,
+    required this.onPriceChanged,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final ValueChanged<bool> onChanged;
+  final double minKg;
+  final double maxKg;
+  final double pricePerKg;
+  final ValueChanged<double> onMinChanged;
+  final ValueChanged<double> onMaxChanged;
+  final ValueChanged<double> onPriceChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: selected ? CyberpunkColors.neonGreen.withOpacity(0.05) : Colors.transparent,
+        borderRadius: BorderRadius.circular(2),
+        border: Border.all(
+          color: selected ? CyberpunkColors.neonGreen : CyberpunkColors.amberMoss,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Checkbox(
+                value: selected,
+                onChanged: (v) => onChanged(v ?? false),
+                fillColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return CyberpunkColors.neonGreen;
+                  }
+                  return Colors.transparent;
+                }),
+                checkColor: CyberpunkColors.backgroundDeep,
+                side: const BorderSide(color: CyberpunkColors.neonGreen, width: 1),
+              ),
+              Icon(icon, size: 18, color: CyberpunkColors.neonGreen),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: CyberpunkText.bodyText(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          if (selected) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('MIN KG', style: CyberpunkText.pixelLabel(fontSize: 6, color: CyberpunkColors.textSecondary)),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 80,
+                        child: TextField(
+                          controller: TextEditingController(text: minKg.toString()),
+                          onChanged: (v) => onMinChanged(double.tryParse(v) ?? 0.5),
+                          style: CyberpunkText.bodyText(fontSize: 11),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('MAX KG', style: CyberpunkText.pixelLabel(fontSize: 6, color: CyberpunkColors.textSecondary)),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 80,
+                        child: TextField(
+                          controller: TextEditingController(text: maxKg.toString()),
+                          onChanged: (v) => onMaxChanged(double.tryParse(v) ?? 100.0),
+                          style: CyberpunkText.bodyText(fontSize: 11),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('PRICE/KG', style: CyberpunkText.pixelLabel(fontSize: 6, color: CyberpunkColors.textSecondary)),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 80,
+                        child: TextField(
+                          controller: TextEditingController(text: pricePerKg.toString()),
+                          onChanged: (v) => onPriceChanged(double.tryParse(v) ?? 0.0),
+                          style: CyberpunkText.bodyText(fontSize: 11),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _StatCard extends StatelessWidget {
   const _StatCard({
     required this.title,
@@ -3008,6 +3259,195 @@ class _StatCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Cyberpunk-styled stat card with neon border
+class _CyberpunkStatCard extends StatelessWidget {
+  const _CyberpunkStatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 220,
+      child: Container(
+        decoration: BoxDecoration(
+          color: CyberpunkColors.backgroundJungle,
+          borderRadius: BorderRadius.circular(2),
+          border: Border.all(color: color, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 8,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(color: color, width: 1),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: CyberpunkText.pixelHeading(fontSize: 18, color: color),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: CyberpunkText.pixelLabel(fontSize: 8, color: CyberpunkColors.textSecondary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Cyberpunk daily intake chart
+class _CyberpunkDailyIntakeChart extends StatelessWidget {
+  const _CyberpunkDailyIntakeChart({
+    required this.dailyCounts,
+  });
+
+  final Map<DateTime, int> dailyCounts;
+
+  static const _weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+
+  @override
+  Widget build(BuildContext context) {
+    final sortedKeys = dailyCounts.keys.toList()..sort();
+    final values = sortedKeys.map((k) => dailyCounts[k]!.toDouble()).toList();
+    final maxVal = values.isEmpty ? 1.0 : math.max(values.reduce(math.max), 1.0);
+    final roundedMaxY = (maxVal * 1.3).ceilToDouble();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.bar_chart_rounded, size: 20, color: CyberpunkColors.neonGreen),
+            const SizedBox(width: 8),
+            Text(
+              'DAILY INTAKES (LAST 14 DAYS)',
+              style: CyberpunkText.pixelHeading(fontSize: 10, color: CyberpunkColors.electricLime),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: BarChart(
+            BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              maxY: roundedMaxY,
+              barTouchData: BarTouchData(
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBorderRadius: BorderRadius.circular(2),
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    final d = sortedKeys[group.x.toInt()];
+                    final label = '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}';
+                    final count = rod.toY.toInt();
+                    return BarTooltipItem(
+                      '$label\n$count INTAKE${count == 1 ? '' : 'S'}',
+                      const TextStyle(
+                        color: CyberpunkColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 32,
+                    interval: maxVal <= 5 ? 1 : null,
+                    getTitlesWidget: (value, meta) {
+                      if (value == 0 || value != value.roundToDouble()) {
+                        return const SizedBox.shrink();
+                      }
+                      return Text(
+                        '${value.toInt()}',
+                        style: CyberpunkText.pixelLabel(fontSize: 8, color: CyberpunkColors.textSecondary),
+                      );
+                    },
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final d = sortedKeys[value.toInt()];
+                      final wd = _weekdays[d.weekday - 1];
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          wd,
+                          style: CyberpunkText.pixelLabel(fontSize: 6, color: CyberpunkColors.textSecondary),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: maxVal <= 5 ? 1 : null,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: CyberpunkColors.amberMoss.withOpacity(0.3),
+                    strokeWidth: 1,
+                  );
+                },
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(color: CyberpunkColors.amberMoss.withOpacity(0.5)),
+              ),
+              barGroups: sortedKeys.asMap().entries.map((e) {
+                return BarChartGroupData(
+                  x: e.key,
+                  barRods: [
+                    BarChartRodData(
+                      toY: dailyCounts[e.value]!.toDouble(),
+                      color: CyberpunkColors.neonGreen,
+                      width: 16,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                      borderSide: const BorderSide(color: CyberpunkColors.electricLime, width: 1),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

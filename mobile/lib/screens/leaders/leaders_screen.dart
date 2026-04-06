@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kitakitar_mobile/services/firestore_service.dart';
+import 'package:kitakitar_mobile/theme/cyberpunk_theme.dart';
 
 class LeadersScreen extends StatelessWidget {
   const LeadersScreen({super.key});
@@ -8,95 +9,90 @@ class LeadersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      // 4 swipeable tabs:
-      // Users (points), Users (weight), Centers (points), Centers (weight)
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Leaders'),
-          bottom: const TabBar(
+          title: Text('LEADERS', style: CyberpunkText.pixelHeading(fontSize: 12)),
+          backgroundColor: CyberpunkColors.backgroundDeep,
+          elevation: 0,
+          bottom: TabBar(
             isScrollable: true,
-            tabs: [
-              Tab(text: 'Users • Points'),
-              Tab(text: 'Users • Weight'),
-              Tab(text: 'Centers • Points'),
-              Tab(text: 'Centers • Weight'),
+            indicatorColor: CyberpunkColors.neonGreen,
+            indicatorWeight: 2,
+            labelColor: CyberpunkColors.neonGreen,
+            unselectedLabelColor: CyberpunkColors.textSecondary,
+            labelStyle: CyberpunkText.pixelLabel(fontSize: 8),
+            unselectedLabelStyle: CyberpunkText.pixelLabel(fontSize: 8, color: CyberpunkColors.textSecondary),
+            tabs: const [
+              Tab(text: 'USERS • PTS'),
+              Tab(text: 'USERS • KG'),
+              Tab(text: 'CENTERS • PTS'),
+              Tab(text: 'CENTERS • KG'),
             ],
           ),
         ),
-        body: Column(
-          children: [
-            const Expanded(
-              child: TabBarView(
-                children: [
-                  _LeaderboardList(
-                    type: 'users',
-                    metric: 'points',
-                  ),
-                  _LeaderboardList(
-                    type: 'users',
-                    metric: 'totalWeight',
-                    isWeight: true,
-                  ),
-                  _LeaderboardList(
-                    type: 'centers',
-                    metric: 'points',
-                  ),
-                  _LeaderboardList(
-                    type: 'centers',
-                    metric: 'totalWeight',
-                    isWeight: true,
-                  ),
-                ],
+        body: CircuitGridBackground(
+          child: Column(
+            children: [
+              const Expanded(
+                child: TabBarView(
+                  children: [
+                    _LeaderboardList(
+                      type: 'users',
+                      metric: 'points',
+                    ),
+                    _LeaderboardList(
+                      type: 'users',
+                      metric: 'totalWeight',
+                      isWeight: true,
+                    ),
+                    _LeaderboardList(
+                      type: 'centers',
+                      metric: 'points',
+                    ),
+                    _LeaderboardList(
+                      type: 'centers',
+                      metric: 'totalWeight',
+                      isWeight: true,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const _RewardsBanner(),
-          ],
+              const _CyberpunkRewardsBanner(),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _RewardsBanner extends StatelessWidget {
-  const _RewardsBanner();
+class _CyberpunkRewardsBanner extends StatelessWidget {
+  const _CyberpunkRewardsBanner();
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            colorScheme.tertiary,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: CyberpunkColors.backgroundJungle,
+        borderRadius: BorderRadius.circular(2),
+        border: Border.all(color: CyberpunkColors.electricLime, width: 2),
+        boxShadow: CyberpunkGlow.limeGlow(intensity: 0.3),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
+              color: CyberpunkColors.electricLime.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(2),
+              border: Border.all(color: CyberpunkColors.electricLime, width: 1),
             ),
             child: const Icon(
               Icons.card_giftcard_rounded,
-              color: Colors.white,
+              color: CyberpunkColors.electricLime,
               size: 28,
             ),
           ),
@@ -107,18 +103,19 @@ class _RewardsBanner extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Rewards from Partners',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  'REWARDS FROM PARTNERS',
+                  style: CyberpunkText.pixelLabel(
+                    fontSize: 8,
+                    color: CyberpunkColors.electricLime,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Exchange your points for exclusive deals & discounts',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
+                  'Exchange points for exclusive deals',
+                  style: CyberpunkText.bodyText(
+                    fontSize: 12,
+                    color: CyberpunkColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -127,15 +124,15 @@ class _RewardsBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
+              color: CyberpunkColors.toxicGlow.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(2),
+              border: Border.all(color: CyberpunkColors.toxicGlow, width: 1),
             ),
-            child: const Text(
-              'Soon',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
+            child: Text(
+              'COMING SOON',
+              style: CyberpunkText.pixelLabel(
+                fontSize: 7,
+                color: CyberpunkColors.toxicGlow,
               ),
             ),
           ),
@@ -156,6 +153,19 @@ class _LeaderboardList extends StatelessWidget {
     this.isWeight = false,
   });
 
+  Color _getRankColor(int rank) {
+    switch (rank) {
+      case 1:
+        return CyberpunkColors.electricLime;
+      case 2:
+        return CyberpunkColors.neonGreen;
+      case 3:
+        return CyberpunkColors.toxicGlow;
+      default:
+        return CyberpunkColors.amberMoss;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final firestoreService = FirestoreService();
@@ -164,18 +174,31 @@ class _LeaderboardList extends StatelessWidget {
       stream: firestoreService.getLeaderboard(type, metric: metric),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: CyberpunkColors.neonGreen),
+          );
         }
 
         if (snapshot.hasError) {
-          return const Center(child: Text('No data'));
+          return Center(
+            child: Text(
+              'ERROR LOADING DATA',
+              style: CyberpunkText.pixelLabel(fontSize: 10),
+            ),
+          );
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No data'));
+          return Center(
+            child: Text(
+              'NO DATA AVAILABLE',
+              style: CyberpunkText.pixelLabel(fontSize: 10),
+            ),
+          );
         }
 
         return ListView.builder(
+          padding: const EdgeInsets.all(8),
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             final doc = snapshot.data!.docs[index];
@@ -184,29 +207,59 @@ class _LeaderboardList extends StatelessWidget {
 
             final value = data[metric] ?? 0;
             final formattedValue = isWeight
-                ? '${(value as num).toDouble().toStringAsFixed(1)} kg'
-                : '${value ?? 0} pts';
+                ? '${(value as num).toDouble().toStringAsFixed(1)} KG'
+                : '${value ?? 0} PTS';
 
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: rank == 1
-                    ? Colors.amber
-                    : rank == 2
-                        ? Colors.grey
-                        : rank == 3
-                            ? Colors.brown
-                            : Colors.green,
-                child: Text('$rank'),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: CyberpunkColors.backgroundMoss,
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(
+                  color: rank <= 3 ? _getRankColor(rank) : CyberpunkColors.amberMoss,
+                  width: rank <= 3 ? 2 : 1,
+                ),
+                boxShadow: rank <= 3
+                    ? [
+                        BoxShadow(
+                          color: _getRankColor(rank).withOpacity(0.2),
+                          blurRadius: 8,
+                          spreadRadius: 1,
+                        ),
+                      ]
+                    : null,
               ),
-              title: Text(
-                (data['name'] ?? (type == 'users' ? 'User' : 'Center'))
-                    as String,
-              ),
-              trailing: Text(
-                formattedValue,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              child: ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: _getRankColor(rank).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(2),
+                    border: Border.all(color: _getRankColor(rank), width: 1),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$rank',
+                      style: CyberpunkText.pixelHeading(
+                        fontSize: 12,
+                        color: _getRankColor(rank),
+                        glow: rank <= 3,
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  (data['name'] ?? (type == 'users' ? 'User' : 'Center'))
+                      as String,
+                  style: CyberpunkText.bodyText(),
+                ),
+                trailing: Text(
+                  formattedValue,
+                  style: CyberpunkText.pixelHeading(
+                    fontSize: 10,
+                    color: CyberpunkColors.neonGreen,
+                  ),
                 ),
               ),
             );
@@ -216,4 +269,3 @@ class _LeaderboardList extends StatelessWidget {
     );
   }
 }
-

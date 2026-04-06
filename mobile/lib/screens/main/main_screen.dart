@@ -5,6 +5,7 @@ import 'package:kitakitar_mobile/screens/scan/scan_screen.dart';
 import 'package:kitakitar_mobile/screens/map/map_screen.dart';
 import 'package:kitakitar_mobile/screens/leaders/leaders_screen.dart';
 import 'package:kitakitar_mobile/screens/profile/profile_screen.dart';
+import 'package:kitakitar_mobile/theme/cyberpunk_theme.dart';
 
 class MainScreen extends StatefulWidget {
   final int? initialTab;
@@ -34,8 +35,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Listen to provider: when user taps "Show on Map" from scan result,
-    // shouldSwitchToMap becomes true and we switch to the map tab.
     final provider = Provider.of<ScanFiltersProvider>(context);
     if (provider.shouldSwitchToMap) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,34 +53,76 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.camera_alt),
-            label: 'Scan',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: CyberpunkColors.backgroundDeep,
+          border: const Border(
+            top: BorderSide(color: CyberpunkColors.neonGreen, width: 1),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
+          boxShadow: CyberpunkGlow.greenGlow(intensity: 0.2),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, Icons.camera_alt, 'SCAN'),
+                _buildNavItem(1, Icons.map, 'MAP'),
+                _buildNavItem(2, Icons.leaderboard, 'LEADERS'),
+                _buildNavItem(3, Icons.person, 'PROFILE'),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.leaderboard),
-            label: 'Leaders',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _currentIndex == index;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? CyberpunkColors.neonGreen.withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(2),
+          border: Border.all(
+            color: isSelected ? CyberpunkColors.neonGreen : Colors.transparent,
+            width: 1,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+          boxShadow: isSelected ? CyberpunkGlow.greenGlow(intensity: 0.3) : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? CyberpunkColors.neonGreen
+                  : CyberpunkColors.textSecondary,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: CyberpunkText.pixelLabel(
+                fontSize: 6,
+                color: isSelected
+                    ? CyberpunkColors.neonGreen
+                    : CyberpunkColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
