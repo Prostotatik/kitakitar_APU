@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:kitakitar_mobile/providers/scan_filters_provider.dart';
+import 'package:kitakitar_mobile/theme/cyberpunk_theme.dart';
 import 'package:kitakitar_mobile/screens/scan/scan_screen.dart';
 import 'package:kitakitar_mobile/screens/map/map_screen.dart';
 import 'package:kitakitar_mobile/screens/leaders/leaders_screen.dart';
@@ -23,6 +24,13 @@ class _MainScreenState extends State<MainScreen> {
     const MapScreen(),
     const LeadersScreen(),
     const ProfileScreen(),
+  ];
+
+  final List<CyberpunkNavItem> _navItems = const [
+    CyberpunkNavItem(icon: Icons.camera_alt, label: 'SCAN'),
+    CyberpunkNavItem(icon: Icons.map, label: 'MAP'),
+    CyberpunkNavItem(icon: Icons.leaderboard, label: 'LEADERS'),
+    CyberpunkNavItem(icon: Icons.person, label: 'PROFILE'),
   ];
 
   @override
@@ -50,38 +58,20 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CyberpunkColors.voidBlack,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CyberpunkBottomNav(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.camera_alt),
-            label: 'Scan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.leaderboard),
-            label: 'Leaders',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        items: _navItems,
       ),
     );
   }
 }
-

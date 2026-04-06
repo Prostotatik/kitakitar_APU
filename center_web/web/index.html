@@ -18,12 +18,13 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="KitaKitar Center - Cyberpunk Eco Recycling Admin Panel">
+  <meta name="theme-color" content="#0a0a0f">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="center_web">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KitaKitar">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
@@ -31,6 +32,65 @@
 
   <title>KitaKitar Center</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Google Fonts: Press Start 2P (Pixel Font) + Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400;700&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Cyberpunk Arcade Theme CSS -->
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #12121a; }
+    ::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00ffa3; }
+
+    /* Selection */
+    ::selection { background: #00ff88; color: #0a0a0f; }
+
+    /* Global scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 136, 0.03) 0px,
+        rgba(0, 255, 136, 0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Font definitions for Flutter */
+    @font-face {
+      font-family: 'PressStart2P';
+      src: url('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAAAM8cktt1Q.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PressStart2P';
+      src: url('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAAAM8cktt1Q.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'RobotoMono';
+      src: url('https://fonts.gstatic.com/s/robotomono/v23/L0x5DF4xlVMF-BfR8bXMIjhLq3-cXbKD.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
 
   <!-- Google Maps JS API with Places. Functions are defined below and wait for API to load. -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB86LHZ1Z0sXoOTWj2Wb8NuNvLv4R4dxdw&libraries=places&loading=async" async defer></script>

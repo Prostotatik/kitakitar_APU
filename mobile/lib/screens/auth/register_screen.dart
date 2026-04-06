@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kitakitar_mobile/providers/auth_provider.dart';
+import 'package:kitakitar_mobile/theme/cyberpunk_theme.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,7 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
+        const SnackBar(content: Text('PASSWORDS DO NOT MATCH')),
       );
       return;
     }
@@ -72,149 +73,181 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
-      ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      prefixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter name';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
+      body: Container(
+        decoration: const BoxDecoration(
+          color: CyberpunkColors.voidBlack,
+        ),
+        child: Stack(
+          children: [
+            // Circuit grid background
+            CustomPaint(
+              painter: CircuitGridPainter(
+                color: CyberpunkColors.neonCyan,
+                gridSize: 50,
+              ),
+              size: Size.infinite,
+            ),
+            // Main content
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Logo
+                        const CyberpunkLogoHeader(
+                          title: 'NEW RECRUIT',
+                          subtitle: 'CREATE YOUR IDENTITY',
+                          iconSize: 48,
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Name field
+                        NeonTextField(
+                          controller: _nameController,
+                          labelText: 'IDENTITY',
+                          hintText: 'Your name',
+                          prefixIcon: Icons.person,
+                          neonColor: CyberpunkColors.neonCyan,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter name';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Email field
+                        NeonTextField(
+                          controller: _emailController,
+                          labelText: 'EMAIL',
+                          hintText: 'user@example.com',
+                          prefixIcon: Icons.email,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter email';
+                            }
+                            if (!value.contains('@')) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Password field
+                        NeonTextField(
+                          controller: _passwordController,
+                          labelText: 'PASSWORD',
+                          hintText: '••••••••',
+                          prefixIcon: Icons.lock,
+                          obscureText: _obscurePassword,
+                          suffixIcon: _obscurePassword
                               ? Icons.visibility
                               : Icons.visibility_off,
+                          onToggleObscure: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter password';
+                            }
+                            if (value.length < 6) {
+                              return 'Min 6 characters';
+                            }
+                            return null;
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                      border: const OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    obscureText: _obscureConfirmPassword,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureConfirmPassword
+                        const SizedBox(height: 16),
+
+                        // Confirm password field
+                        NeonTextField(
+                          controller: _confirmPasswordController,
+                          labelText: 'CONFIRM PASSWORD',
+                          hintText: '••••••••',
+                          prefixIcon: Icons.lock_outline,
+                          obscureText: _obscureConfirmPassword,
+                          suffixIcon: _obscureConfirmPassword
                               ? Icons.visibility
                               : Icons.visibility_off,
+                          onToggleObscure: () {
+                            setState(() {
+                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Confirm password';
+                            }
+                            return null;
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureConfirmPassword = !_obscureConfirmPassword;
-                          });
-                        },
-                      ),
-                      border: const OutlineInputBorder(),
+                        const SizedBox(height: 32),
+
+                        // Register button
+                        PixelButton(
+                          text: authProvider.isLoading ? 'CREATING...' : 'INITIATE',
+                          neonColor: CyberpunkColors.neonCyan,
+                          isLoading: authProvider.isLoading,
+                          onPressed: authProvider.isLoading ? null : _handleRegister,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Google sign up
+                        PixelButton(
+                          text: 'GOOGLE ACCESS',
+                          neonColor: CyberpunkColors.amber,
+                          icon: Icons.g_mobiledata,
+                          isOutlined: true,
+                          onPressed: authProvider.isLoading ? null : _handleGoogleRegister,
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Back to login
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'ALREADY HAVE ACCESS?',
+                              style: TextStyle(
+                                color: CyberpunkColors.mistGray,
+                                fontSize: 8,
+                                fontFamily: 'PressStart2P',
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            PixelButton(
+                              text: 'LOGIN',
+                              neonColor: CyberpunkColors.neonGreen,
+                              fontSize: 10,
+                              isOutlined: true,
+                              onPressed: () {
+                                if (Navigator.canPop(context)) {
+                                  context.pop();
+                                } else {
+                                  context.go('/login');
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Confirm password';
-                      }
-                      return null;
-                    },
                   ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: authProvider.isLoading ? null : _handleRegister,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: authProvider.isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Register'),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    onPressed:
-                        authProvider.isLoading ? null : _handleGoogleRegister,
-                    icon: const Icon(Icons.g_mobiledata),
-                    label: const Text('Register with Google'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  TextButton(
-                    onPressed: () {
-                      if (Navigator.canPop(context)) {
-                        context.pop();
-                      } else {
-                        context.go('/login');
-                      }
-                    },
-                    child: const Text('Already have an account? Sign In'),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
-

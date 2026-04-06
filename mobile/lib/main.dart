@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ import 'package:kitakitar_mobile/screens/scan/scan_result_screen.dart';
 import 'package:kitakitar_mobile/screens/scan/scan_history_screen.dart';
 import 'package:kitakitar_mobile/models/ai_scan_model.dart';
 import 'package:kitakitar_mobile/screens/qr/qr_scanner_screen.dart';
+import 'package:kitakitar_mobile/theme/cyberpunk_theme.dart';
 
 late final AuthProvider _authProvider;
 
@@ -23,7 +25,7 @@ void main() async {
 
   // Load environment variables from .env (including GEMINI_API_KEY)
   await dotenv.load(fileName: '.env');
-  
+
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
@@ -41,7 +43,10 @@ void main() async {
   }
 
   _authProvider = AuthProvider();
-  
+
+  // Set cyberpunk system UI overlay
+  SystemChrome.setSystemUIOverlayStyle(cyberpunkSystemOverlay);
+
   runApp(const MyApp());
 }
 
@@ -71,19 +76,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'KitaKitar',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-          primaryColor: const Color(0xFF4CAF50),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4CAF50),
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 0,
-          ),
-        ),
+        theme: buildCyberpunkTheme(),
         routerConfig: _router,
       ),
     );

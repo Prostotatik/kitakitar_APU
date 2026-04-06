@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kitakitar_mobile/providers/auth_provider.dart';
 import 'package:kitakitar_mobile/providers/user_provider.dart';
 import 'package:kitakitar_mobile/services/storage_service.dart';
+import 'package:kitakitar_mobile/theme/cyberpunk_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -77,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated')),
+        const SnackBar(content: Text('PROFILE UPDATED')),
       );
     }
   }
@@ -89,8 +90,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = userProvider.user;
 
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: CyberpunkColors.voidBlack,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 40,
+                height: 40,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation(CyberpunkColors.neonGreen),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'LOADING...',
+                style: TextStyle(
+                  color: CyberpunkColors.neonGreen,
+                  fontSize: 10,
+                  fontFamily: 'PressStart2P',
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -102,12 +127,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return Scaffold(
+      backgroundColor: CyberpunkColors.voidBlack,
       appBar: AppBar(
-        title: const Text('Profile'),
+        backgroundColor: CyberpunkColors.voidBlack,
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.person, color: CyberpunkColors.neonGreen, size: 24),
+            const SizedBox(width: 12),
+            Text(
+              'PROFILE',
+              style: TextStyle(
+                color: CyberpunkColors.neonGreen,
+                fontSize: 12,
+                fontFamily: 'PressStart2P',
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
+                shadows: NeonGlow.greenTextGlow(),
+              ),
+            ),
+          ],
+        ),
         actions: [
           if (!_isEditing)
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: CyberpunkColors.neonGreen.withOpacity(0.5), width: 1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.edit, color: CyberpunkColors.neonGreen, size: 18),
+              ),
               onPressed: () {
                 setState(() {
                   _isEditing = true;
@@ -116,145 +168,248 @@ class _ProfileScreenState extends State<ProfileScreen> {
             )
           else
             IconButton(
-              icon: const Icon(Icons.check),
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: CyberpunkColors.neonGreen,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.check, color: CyberpunkColors.voidBlack, size: 18),
+              ),
               onPressed: _saveProfile,
             ),
         ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage: user.avatarUrl != null
-                        ? NetworkImage(user.avatarUrl!)
-                        : null,
-                    child: user.avatarUrl == null
-                        ? const Icon(Icons.person, size: 60)
-                        : null,
-                  ),
-                  if (_isEditing)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.green,
-                        child: IconButton(
-                          icon: const Icon(Icons.camera_alt, size: 20),
-                          color: Colors.white,
-                          onPressed: _pickImage,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              TextFormField(
-                controller: _nameController,
-                enabled: _isEditing,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                enabled: _isEditing,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 32),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Points'),
-                          Text(
-                            '${user.points}',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Total Weight'),
-                          Text(
-                            '${user.totalWeight.toStringAsFixed(2)} kg',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () => context.push('/qr-scanner'),
-                  icon: const Icon(Icons.qr_code_scanner),
-                  label: const Text('Scan QR Code'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    authProvider.signOut();
-                  },
-                  child: const Text('Sign Out'),
-                ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: CyberpunkColors.neonGreen.withOpacity(0.3), width: 1),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: CyberpunkColors.neonGreen.withOpacity(0.1),
+                blurRadius: 20,
               ),
             ],
           ),
         ),
       ),
+      body: Container(
+        decoration: const BoxDecoration(color: CyberpunkColors.voidBlack),
+        child: Stack(
+          children: [
+            // Circuit grid background
+            CustomPaint(
+              painter: CircuitGridPainter(
+                color: CyberpunkColors.neonGreen,
+                gridSize: 50,
+              ),
+              size: Size.infinite,
+            ),
+            // Main content
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    // Avatar
+                    Stack(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: CyberpunkColors.darkMatter,
+                            border: Border.all(color: CyberpunkColors.neonGreen, width: 3),
+                            borderRadius: BorderRadius.circular(60),
+                            boxShadow: NeonGlow.greenGlow(blur: 20),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(58),
+                            child: user.avatarUrl != null
+                                ? Image.network(
+                                    user.avatarUrl!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: CyberpunkColors.neonGreen,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: CyberpunkColors.neonGreen,
+                                  ),
+                          ),
+                        ),
+                        if (_isEditing)
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: CyberpunkColors.neonGreen,
+                                  border: Border.all(color: CyberpunkColors.voidBlack, width: 2),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: NeonGlow.greenGlow(blur: 8),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  size: 20,
+                                  color: CyberpunkColors.voidBlack,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    // Name field
+                    NeonTextField(
+                      controller: _nameController,
+                      labelText: 'NAME',
+                      hintText: 'Your identity',
+                      prefixIcon: Icons.person,
+                      enabled: _isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter name';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Email field
+                    NeonTextField(
+                      controller: _emailController,
+                      labelText: 'EMAIL',
+                      hintText: 'user@example.com',
+                      prefixIcon: Icons.email,
+                      keyboardType: TextInputType.emailAddress,
+                      enabled: _isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter email';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    // Stats card
+                    ArcadeCard(
+                      neonColor: CyberpunkColors.amber,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.eco, color: CyberpunkColors.amber, size: 20),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'ECO CREDITS',
+                                    style: TextStyle(
+                                      color: CyberpunkColors.mistGray,
+                                      fontSize: 10,
+                                      fontFamily: 'PressStart2P',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '${user.points}',
+                                style: TextStyle(
+                                  color: CyberpunkColors.amber,
+                                  fontSize: 20,
+                                  fontFamily: 'PressStart2P',
+                                  fontWeight: FontWeight.w700,
+                                  shadows: NeonGlow.amberTextGlow(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            height: 1,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  CyberpunkColors.amber.withOpacity(0.5),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.scale, color: CyberpunkColors.neonCyan, size: 20),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'TOTAL WEIGHT',
+                                    style: TextStyle(
+                                      color: CyberpunkColors.mistGray,
+                                      fontSize: 10,
+                                      fontFamily: 'PressStart2P',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '${user.totalWeight.toStringAsFixed(2)} KG',
+                                style: TextStyle(
+                                  color: CyberpunkColors.neonCyan,
+                                  fontSize: 20,
+                                  fontFamily: 'PressStart2P',
+                                  fontWeight: FontWeight.w700,
+                                  shadows: NeonGlow.cyanTextGlow(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // QR Scanner button
+                    PixelButton(
+                      text: 'SCAN QR CODE',
+                      neonColor: CyberpunkColors.neonCyan,
+                      icon: Icons.qr_code_scanner,
+                      onPressed: () => context.push('/qr-scanner'),
+                    ),
+                    const SizedBox(height: 16),
+                    // Sign out button
+                    PixelButton(
+                      text: 'SIGN OUT',
+                      neonColor: CyberpunkColors.warningRed,
+                      isOutlined: true,
+                      onPressed: () {
+                        authProvider.signOut();
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
-

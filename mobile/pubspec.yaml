@@ -9,45 +9,46 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # Firebase (обновлено для исправления PigeonUserDetails)
   firebase_core: ^4.4.0
   firebase_auth: ^6.1.4
   cloud_firestore: ^6.0.3
   firebase_storage: ^13.0.6
   cloud_functions: ^6.0.6
-  
+
   # Google Sign-In (оставляем 6.x — 7.x ломает API)
   google_sign_in: ^6.2.2
-  
+
   # State Management
   provider: ^6.1.1
-  
+
   # Navigation
   go_router: ^17.0.1
-  
+
   # Camera & Image
   image_picker: ^1.0.7
   camera: ^0.11.3
-  
+
   # Google Maps
   google_maps_flutter: ^2.5.0
   geolocator: ^14.0.2
   geocoding: ^4.0.0
-  
+
   # QR Code Scanner
   mobile_scanner: ^7.1.4
   qr_flutter: ^4.1.0
-  
+
   # Google AI (Gemini) for waste recognition
   google_generative_ai: ^0.4.7
   http: ^1.1.2
-  
+
   # UI
   cupertino_icons: ^1.0.6
   flutter_svg: ^2.0.9
   cached_network_image: ^3.3.0
-  
+  google_fonts: ^6.2.1
+
   # Utils
   intl: ^0.20.2
   shared_preferences: ^2.2.2
