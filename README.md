@@ -706,6 +706,8 @@ The `smart_bin/` system supports **camera capture → classification → QR gene
 | GPIO 15 Pin | SCL Pin |
 | GPIO 14 Pin | SDA Pin |
 
+![Hardware Diagram](https://github.com/Prostotatik/kitakitar_APU/blob/edb2f99a6805f5ee4123c85aa27d03ab96286ec6/readme_assets/Smart%20Bin%20Hardware%20Diagram.png)
+
 ### Required Prerequisites - Firebase Credentials (.json file)
 
 1. Go to **Firebase Console**
