@@ -21,7 +21,7 @@
 
 ---
 
-### 🌍 *KitaKitar* means **“We Recycle”** in Malay  
+### 🌍 *KitaKitar* means **“We Recycle”** in Bahasa Malaysia 
 An AI-driven platform that turns climate action into a **rewarding game—scan your waste, hit the nearest recycling hub, and earn points** to unlock real-world rewards.
 
 </div>
@@ -709,6 +709,8 @@ The `smart_bin/` system supports **camera capture → classification → QR gene
 | 3.3V Pin | VCC Pin |
 | GPIO 15 Pin | SCL Pin |
 | GPIO 14 Pin | SDA Pin |
+
+![Hardware Diagram](https://github.com/Prostotatik/kitakitar_APU/blob/edb2f99a6805f5ee4123c85aa27d03ab96286ec6/readme_assets/Smart%20Bin%20Hardware%20Diagram.png)
 
 ### Required Prerequisites - Firebase Credentials (.json file)
 
