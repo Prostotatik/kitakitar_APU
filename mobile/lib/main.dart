@@ -15,6 +15,7 @@ import 'package:kitakitar_mobile/screens/scan/scan_result_screen.dart';
 import 'package:kitakitar_mobile/screens/scan/scan_history_screen.dart';
 import 'package:kitakitar_mobile/models/ai_scan_model.dart';
 import 'package:kitakitar_mobile/screens/qr/qr_scanner_screen.dart';
+import 'package:kitakitar_mobile/theme/app_theme.dart';
 
 late final AuthProvider _authProvider;
 
@@ -71,19 +72,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'KitaKitar',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-          primaryColor: const Color(0xFF4CAF50),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4CAF50),
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 0,
-          ),
-        ),
+        theme: AppTheme.light,
         routerConfig: _router,
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kitakitar_mobile/models/ai_scan_model.dart';
 import 'package:kitakitar_mobile/services/chat_service.dart';
+import 'package:kitakitar_mobile/theme/app_theme.dart';
 
 class RecyclingChatSheet extends StatefulWidget {
   final List<DetectedMaterial> materials;
@@ -73,36 +74,7 @@ class _RecyclingChatSheetState extends State<RecyclingChatSheet> {
         height: MediaQuery.of(context).size.height * 0.65,
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.eco, color: Colors.white, size: 22),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: Text(
-                      'Recycling Assistant',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child:
-                        const Icon(Icons.close, color: Colors.white, size: 22),
-                  ),
-                ],
-              ),
-            ),
-
+            _buildHeader(),
             Expanded(
               child: _chatService.messages.isEmpty
                   ? _buildEmptyState()
@@ -112,62 +84,131 @@ class _RecyclingChatSheetState extends State<RecyclingChatSheet> {
                       itemCount: _chatService.messages.length +
                           (_isSending ? 1 : 0),
                       itemBuilder: (context, index) {
-                        if (index == _chatService.messages.length && _isSending) {
+                        if (index == _chatService.messages.length &&
+                            _isSending) {
                           return _buildTypingIndicator();
                         }
                         return _buildBubble(_chatService.messages[index]);
                       },
                     ),
             ),
+            _buildInputBar(),
+          ],
+        ),
+      ),
+    );
+  }
 
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 8, 8, 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, -1),
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 12, 12),
+      decoration: const BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(40),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.eco_rounded, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Recycling Assistant',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
+                ),
+                Text(
+                  'Powered by AI',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.white70, size: 22),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputBar() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 8, 8, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 4,
+            offset: const Offset(0, -1),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                textInputAction: TextInputAction.send,
+                onSubmitted: (_) => _send(),
+                decoration: InputDecoration(
+                  hintText: 'Ask about recycling...',
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
-              child: SafeArea(
-                top: false,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: (_) => _send(),
-                        decoration: InputDecoration(
-                          hintText: 'Ask about recycling...',
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Material(
-                      color: const Color(0xFF4CAF50),
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        onTap: _isSending ? null : _send,
-                        customBorder: const CircleBorder(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(Icons.send, color: Colors.white, size: 20),
-                        ),
-                      ),
-                    ),
-                  ],
+            ),
+            const SizedBox(width: 8),
+            Material(
+              color: AppColors.primary,
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: _isSending ? null : _send,
+                customBorder: const CircleBorder(),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Icon(
+                    Icons.send_rounded,
+                    color: _isSending
+                        ? Colors.white.withAlpha(100)
+                        : Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
@@ -189,30 +230,45 @@ class _RecyclingChatSheetState extends State<RecyclingChatSheet> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.chat_bubble_outline,
-              size: 48, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight.withAlpha(20),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.chat_bubble_outline_rounded,
+                size: 28, color: AppColors.primary),
+          ),
+          const SizedBox(height: 16),
           Text(
             'Ask me anything about recycling!',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
           ),
           const SizedBox(height: 20),
           ...suggestions.map((s) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: OutlinedButton(
-                  onPressed: () {
-                    _controller.text = s;
-                    _send();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF4CAF50),
-                    side: BorderSide(color: Colors.green.shade200),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      _controller.text = s;
+                      _send();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: BorderSide(color: AppColors.primaryLight.withAlpha(60)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                    ),
+                    child: Text(s, style: const TextStyle(fontSize: 13)),
                   ),
-                  child: Text(s, style: const TextStyle(fontSize: 13)),
                 ),
               )),
         ],
@@ -229,7 +285,7 @@ class _RecyclingChatSheetState extends State<RecyclingChatSheet> {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: msg.isUser ? const Color(0xFF4CAF50) : Colors.grey.shade100,
+          color: msg.isUser ? AppColors.primary : Colors.grey.shade100,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -240,7 +296,7 @@ class _RecyclingChatSheetState extends State<RecyclingChatSheet> {
         child: Text(
           msg.text,
           style: TextStyle(
-            color: msg.isUser ? Colors.white : Colors.black87,
+            color: msg.isUser ? Colors.white : AppColors.textPrimary,
             fontSize: 14,
             height: 1.4,
           ),
@@ -320,7 +376,8 @@ class _DotAnimationState extends State<_DotAnimation>
         width: 8,
         height: 8,
         decoration: BoxDecoration(
-          color: Colors.grey.shade400.withOpacity(0.4 + _animation.value * 0.6),
+          color:
+              Colors.grey.shade400.withAlpha((102 + _animation.value * 153).round()),
           shape: BoxShape.circle,
         ),
       ),

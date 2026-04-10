@@ -190,7 +190,7 @@ class FirestoreService {
   //
   // [type]   - "users" or "centers"
   // [metric] - field to sort by, "points" by default
-  Stream<QuerySnapshot> getLeaderboard(
+  Stream<List<QueryDocumentSnapshot>> getLeaderboard(
     String type, {
     String metric = 'points',
   }) {
@@ -199,9 +199,17 @@ class FirestoreService {
 
     return _firestore
         .collection(collection)
-        .orderBy(metric, descending: true)
-        .limit(100)
-        .snapshots();
+        .snapshots()
+        .map((snap) {
+      final docs = snap.docs.toList();
+      docs.sort((a, b) {
+        final aVal = (a.data()[metric] as num?)?.toDouble() ?? 0.0;
+        final bVal = (b.data()[metric] as num?)?.toDouble() ?? 0.0;
+        return bVal.compareTo(aVal);
+      });
+      if (docs.length > 100) return docs.sublist(0, 100);
+      return docs;
+    });
   }
 
   // Transactions
@@ -211,6 +219,76 @@ class FirestoreService {
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots();
+  }
+
+  /// One-time backfill: recalculate carbonFootprint for ALL users & centers
+  /// from existing transactions. Also ensures every user/center document
+  /// has the field (set to 0 if no transactions), so orderBy queries work.
+  Future<int> backfillCarbonFootprint() async {
+    const co2 = <String, double>{
+      'Paper/Cardboard': 0.65,
+      'Plastics': 0.75,
+      'Glass': 0.30,
+      'Aluminum': 0.95,
+      'Batteries': 0.80,
+      'Electronics': 0.80,
+      'Food': 0.50,
+      'Lawn Materials': 0.40,
+      'Used Oil': 0.70,
+      'Household Hazardous Waste': 0.90,
+      'Tires': 0.60,
+      'Metal': 0.85,
+    };
+
+    final txSnap = await _firestore.collection('transactions').get();
+
+    final userTotals = <String, double>{};
+    final centerTotals = <String, double>{};
+
+    for (final doc in txSnap.docs) {
+      final data = doc.data();
+      final userId = data['userId'] as String? ?? '';
+      final centerId = data['centerId'] as String? ?? '';
+      final materials = data['materials'] as List<dynamic>? ?? [];
+
+      double txCo2 = 0;
+      for (final m in materials) {
+        final map = m as Map<String, dynamic>;
+        final type = (map['type'] as String?) ?? '';
+        final weight = (map['weight'] as num?)?.toDouble() ?? 0.0;
+        txCo2 += weight * (co2[type] ?? 0.5);
+      }
+
+      if (userId.isNotEmpty) {
+        userTotals[userId] = (userTotals[userId] ?? 0) + txCo2;
+      }
+      if (centerId.isNotEmpty) {
+        centerTotals[centerId] = (centerTotals[centerId] ?? 0) + txCo2;
+      }
+    }
+
+    // Ensure ALL users and centers get the field (0 if no transactions)
+    final allUsers = await _firestore.collection('users').get();
+    final allCenters = await _firestore.collection('centers').get();
+
+    final batch = _firestore.batch();
+    for (final doc in allUsers.docs) {
+      batch.set(
+        doc.reference,
+        {'carbonFootprint': userTotals[doc.id] ?? 0.0},
+        SetOptions(merge: true),
+      );
+    }
+    for (final doc in allCenters.docs) {
+      batch.set(
+        doc.reference,
+        {'carbonFootprint': centerTotals[doc.id] ?? 0.0},
+        SetOptions(merge: true),
+      );
+    }
+    await batch.commit();
+
+    return txSnap.docs.length;
   }
 }
 

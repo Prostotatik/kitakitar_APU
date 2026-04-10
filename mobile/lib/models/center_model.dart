@@ -8,6 +8,7 @@ class CenterModel {
   final ManagerInfo manager;
   final int points;
   final double totalWeight;
+  final double carbonFootprint;
   final DateTime createdAt;
   final bool isActive;
 
@@ -19,6 +20,7 @@ class CenterModel {
     required this.manager,
     required this.points,
     required this.totalWeight,
+    this.carbonFootprint = 0,
     required this.createdAt,
     required this.isActive,
   });
@@ -44,6 +46,7 @@ class CenterModel {
       manager: ManagerInfo.fromMap(data['manager'] ?? {}),
       points: data['points'] ?? 0,
       totalWeight: (data['totalWeight'] ?? 0).toDouble(),
+      carbonFootprint: (data['carbonFootprint'] ?? 0).toDouble(),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isActive: data['isActive'] ?? true,
     );

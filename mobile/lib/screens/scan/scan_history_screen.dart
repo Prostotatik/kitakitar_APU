@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:kitakitar_mobile/models/ai_scan_model.dart';
 import 'package:kitakitar_mobile/services/firestore_service.dart';
 import 'package:kitakitar_mobile/providers/auth_provider.dart';
+import 'package:kitakitar_mobile/theme/app_theme.dart';
 
 class ScanHistoryScreen extends StatelessWidget {
   const ScanHistoryScreen({super.key});
@@ -45,7 +46,8 @@ class ScanHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = Provider.of<AuthProvider>(context, listen: false).user?.uid;
+    final userId =
+        Provider.of<AuthProvider>(context, listen: false).user?.uid;
 
     if (userId == null) {
       return Scaffold(
@@ -72,21 +74,31 @@ class ScanHistoryScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.history, size: 80, color: Colors.grey.shade300),
-                  const SizedBox(height: 16),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.history_rounded,
+                        size: 40, color: Colors.grey.shade400),
+                  ),
+                  const SizedBox(height: 20),
                   Text(
                     'No scans yet',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     'Your scan history will appear here',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade400,
+                      color: Colors.grey.shade500,
                     ),
                   ),
                 ],
@@ -97,19 +109,20 @@ class ScanHistoryScreen extends StatelessWidget {
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: items.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final item = items[index];
               final materialLabels = item.materials
                   .map((m) => _getMaterialLabel(m.type))
                   .join(', ');
 
-              return Card(
-                clipBehavior: Clip.antiAlias,
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.grey.shade200),
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: InkWell(
                   onTap: () {
                     context.push('/scan-result', extra: {
@@ -118,35 +131,44 @@ class ScanHistoryScreen extends StatelessWidget {
                       'imageUrl': item.imageUrl,
                     });
                   },
+                  borderRadius: BorderRadius.circular(14),
                   child: Row(
                     children: [
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: CachedNetworkImage(
-                          imageUrl: item.imageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => Container(
-                            color: Colors.grey.shade200,
-                            child: const Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(14),
+                          bottomLeft: Radius.circular(14),
+                        ),
+                        child: SizedBox(
+                          width: 90,
+                          height: 90,
+                          child: CachedNetworkImage(
+                            imageUrl: item.imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => Container(
+                              color: Colors.grey.shade100,
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2),
+                                ),
                               ),
                             ),
-                          ),
-                          errorWidget: (_, __, ___) => Container(
-                            color: Colors.grey.shade200,
-                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                            errorWidget: (_, __, ___) => Container(
+                              color: Colors.grey.shade100,
+                              child: Icon(Icons.broken_image,
+                                  color: Colors.grey.shade400),
+                            ),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
+                            horizontal: 14,
+                            vertical: 12,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,29 +178,38 @@ class ScanHistoryScreen extends StatelessWidget {
                                     ? materialLabels
                                     : 'Unknown',
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _dateFormat.format(item.createdAt),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey.shade600,
-                                ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Icon(Icons.access_time,
+                                      size: 14,
+                                      color: Colors.grey.shade500),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _dateFormat.format(item.createdAt),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(right: 12),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
                         child: Icon(
                           Icons.chevron_right,
-                          color: Colors.grey,
+                          color: Colors.grey.shade400,
                         ),
                       ),
                     ],

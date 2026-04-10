@@ -7,6 +7,7 @@ class UserModel {
   final String? avatarUrl;
   final int points;
   final double totalWeight;
+  final double carbonFootprint;
   final DateTime createdAt;
   final DateTime? lastLoginAt;
   final String provider;
@@ -19,6 +20,7 @@ class UserModel {
     this.avatarUrl,
     required this.points,
     required this.totalWeight,
+    this.carbonFootprint = 0,
     required this.createdAt,
     this.lastLoginAt,
     required this.provider,
@@ -34,6 +36,7 @@ class UserModel {
       avatarUrl: data['avatarUrl'],
       points: data['points'] ?? 0,
       totalWeight: (data['totalWeight'] ?? 0).toDouble(),
+      carbonFootprint: (data['carbonFootprint'] ?? 0).toDouble(),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       lastLoginAt: (data['lastLoginAt'] as Timestamp?)?.toDate(),
       provider: data['provider'] ?? 'email',
@@ -50,6 +53,7 @@ class UserModel {
       'avatarUrl': avatarUrl,
       'points': points,
       'totalWeight': totalWeight,
+      'carbonFootprint': carbonFootprint,
       'createdAt': Timestamp.fromDate(createdAt),
       'lastLoginAt': lastLoginAt != null ? Timestamp.fromDate(lastLoginAt!) : null,
       'provider': provider,
@@ -63,6 +67,7 @@ class UserModel {
     String? avatarUrl,
     int? points,
     double? totalWeight,
+    double? carbonFootprint,
     DateTime? lastLoginAt,
     Map<String, double>? stats,
   }) {
@@ -73,6 +78,7 @@ class UserModel {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       points: points ?? this.points,
       totalWeight: totalWeight ?? this.totalWeight,
+      carbonFootprint: carbonFootprint ?? this.carbonFootprint,
       createdAt: createdAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       provider: provider,

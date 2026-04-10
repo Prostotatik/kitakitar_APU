@@ -179,6 +179,8 @@ class AuthProvider with ChangeNotifier {
     return s;
   }
 
+  static bool _co2BackfillDone = false;
+
   Future<void> _ensureUserDocument() async {
     if (_user == null) return;
 
@@ -190,10 +192,15 @@ class AuthProvider with ChangeNotifier {
         _user!.providerData.first.providerId == 'google.com' ? 'google' : 'email',
       );
     } else {
-      // Update last login
       await _firestoreService.updateUser(_user!.uid, {
         'lastLoginAt': DateTime.now(),
       });
+
+      // One-time CO₂ backfill for legacy data
+      if (!_co2BackfillDone && existingUser.carbonFootprint == 0) {
+        _co2BackfillDone = true;
+        _firestoreService.backfillCarbonFootprint().ignore();
+      }
     }
   }
 
@@ -207,6 +214,7 @@ class AuthProvider with ChangeNotifier {
       avatarUrl: _user!.photoURL,
       points: 0,
       totalWeight: 0,
+      carbonFootprint: 0,
       createdAt: DateTime.now(),
       lastLoginAt: DateTime.now(),
       provider: provider,

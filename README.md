@@ -56,12 +56,16 @@ An AI-driven platform that turns climate action into a **rewarding game—scan y
       <th>AI Chat</th>
       <th>Nearby Centers</th>
       <th>Leaderboard</th>
+      <th>Scan Result</th>
+      <th>User Profile</th>
     </tr>
     <tr>
-      <td align="center"><img src="readme_assets/screenshot_scan.png" alt="scan" style="width:240px;height:auto;" /></td>
-      <td align="center"><img src="readme_assets/Screenshot_aichat.png" alt="chat" style="width:240px;height:auto;" /></td>
-      <td align="center"><img src="readme_assets/screenshot_map.png" alt="map" style="width:240px;height:auto;" /></td>
-      <td align="center"><img src="readme_assets/screenshot_leaderboard.png" alt="leaders" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_MobileScan.png" alt="scan" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_MobileAIChat.png" alt="chat" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_MobileMap.png" alt="map" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_MobileLeaderboard.png" alt="leaders" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_MobileScanResults.png" alt="scan results" style="width:240px;height:auto;" /></td>
+      <td align="center"><img src="readme_assets/Screenshot_MobileUserProfile.png" alt="profile" style="width:240px;height:auto;" /></td>
     </tr>
   </table>
 </div>
