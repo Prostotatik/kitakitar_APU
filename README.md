@@ -759,23 +759,40 @@ pip install -r requirements.txt
 
 ### Run
 
-1. Change your **file location** for your Firebase Credentials (*Line 63* in `smart_bin/server.py`)
-2. Change your **Wifi Name** (*Line 78* in `smart_bin/smart_bin.ino`)
-3. Change your **Wifi Password** (*Line 79* in `smart_bin/smart_bin.ino`)
-4. Change your **PC's LAN IP** (*Line 80* in `smart_bin/smart_bin.ino`)
-5. Connect your **PC** and **ESP32 Cam** using *Type C Cable*
-6. Open **Arduino IDE**
-7. Go to Tools → Board → esp32 → **AI Thinker ESP32-CAM**
-8. Choose your own **Port**
-9. Click **Upload** button
-10. After done uploading, click the **Reset** button on ESP32 Cam or ESP32 Cam Mother Board
-11. Go to Tools → Serial Monitor (115200 baud)
-12. 
+1. Make sure the center this bin acts as already exists in Firestore (registered via `center_web`) with `paper` and `aluminum` materials configured under `centers/{centerId}/materials`, each with a `pricePerKg` — the bin prices QR codes from that data.
+2. Set your Firebase config as environment variables — nothing is hardcoded in `server.py` anymore (see `smart_bin/binserver/config.py`):
+
+   **PowerShell**
+   ```powershell
+   $env:SMART_BIN_CENTER_ID = "your-center-id"
+   $env:FIREBASE_SERVICE_ACCOUNT = "C:\path\to\kitakitar-smart-bin-firebase-adminsdk-....json"
+   ```
+
+   **bash**
+   ```bash
+   export SMART_BIN_CENTER_ID="your-center-id"
+   export FIREBASE_SERVICE_ACCOUNT="/path/to/kitakitar-smart-bin-firebase-adminsdk-....json"
+   ```
+
+   With both set (and `SMART_BIN_DEMO` left unset), the server prints `[Firebase] Ready — QR codes use center ...` and writes real `/qr_codes` docs to Firestore.
+
+   > Don't set `SMART_BIN_DEMO` — that switches to an in-memory ledger that never touches Firestore, meant only for local testing without credentials. Leaving both variables unset also skips Firebase, starting the server in **EVIDENCE-ONLY MODE** (photos/detections saved to SQLite, no QR codes issued).
+3. Change your **Wifi Name** (*Line 78* in `smart_bin/smart_bin.ino`)
+4. Change your **Wifi Password** (*Line 79* in `smart_bin/smart_bin.ino`)
+5. Change your **PC's LAN IP** (*Line 80* in `smart_bin/smart_bin.ino`)
+6. Connect your **PC** and **ESP32 Cam** using *Type C Cable*
+7. Open **Arduino IDE**
+8. Go to Tools → Board → esp32 → **AI Thinker ESP32-CAM**
+9. Choose your own **Port**
+10. Click **Upload** button
+11. After done uploading, click the **Reset** button on ESP32 Cam or ESP32 Cam Mother Board
+12. Go to Tools → Serial Monitor (115200 baud)
+13. 
 ```bash
 cd smart_bin
 python server.py
 ```
-13. Now your KitaKitar Smart Bin is ready!
+14. Now your KitaKitar Smart Bin is ready!
 
 ### Material Mapping
 - `can` → stored as **aluminum**, weight = **0.015 kg**
