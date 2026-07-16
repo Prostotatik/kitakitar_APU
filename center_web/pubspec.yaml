@@ -1,0 +1,40 @@
+name: center_web
+description: Flutter web frontend for recycling centers admin panel (independent from mobile app).
+publish_to: "none"
+
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase web (версии синхронизированы с mobile, чтобы избежать конфликтов)
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  cloud_firestore: ^6.0.3
+
+  # UI
+  cupertino_icons: ^1.0.8
+
+  # State management
+  provider: ^6.1.1
+
+  # QR preview (для будущей реальной генерации QR)
+  qr_flutter: ^4.1.0
+
+  # Map, geocoding, and Places autocomplete (address suggestions)
+  google_maps_flutter: ^2.5.0
+  geocoding: ^4.0.0
+  http: ^1.1.2
+  fl_chart: ^1.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

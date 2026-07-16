@@ -1,0 +1,68 @@
+#pragma once
+
+// ═══ Deployment constants — edit these before flashing ═══════════════
+
+// WiFi
+#define WIFI_SSID              "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD          "YOUR_WIFI_PASSWORD"
+
+// Firebase (client-side REST — NOT the Admin SDK)
+#define FIREBASE_PROJECT_ID    "YOUR_FIREBASE_PROJECT_ID"   // console → Project settings
+#define FIREBASE_API_KEY       "YOUR_FIREBASE_WEB_API_KEY"  // Project settings → General → Web API key
+#define BIN_AUTH_EMAIL         "smartbin01@example.com"     // dedicated Auth user, created once in console
+#define BIN_AUTH_PASSWORD      "CHANGE_ME"
+#define BIN_CENTER_ID          "gwTyIuDCyDQtMdJIWbfoDYIVj0l1" // centers/{id} credited by this bin
+
+// Gemini (new dedicated key from Google AI Studio)
+#define GEMINI_API_KEY         "YOUR_GEMINI_API_KEY"
+#define GEMINI_MODEL           "gemini-2.5-flash"
+
+// ═══ Behavior constants ══════════════════════════════════════════════
+
+// Reward estimate shown on the OLED (mirrors mobile QRService; the
+// canonical calculation happens in the app at redemption).
+#define POINTS_BASE_MULTIPLIER 100.0f
+#define POINTS_FREE_BONUS      1.5f
+#define POINTS_CO2_MULTIPLIER  100.0f
+
+// Clamps applied to Gemini estimates before writing (spec).
+#define CLAMP_WEIGHT_MIN_KG    0.005f
+#define CLAMP_WEIGHT_MAX_KG    3.0f
+#define CLAMP_CO2_MIN_KG       0.0f
+#define CLAMP_CO2_MAX_KG       5.0f
+
+// Session
+#define SESSION_TIMEOUT_MS     30000UL
+#define QR_POLL_INTERVAL_MS    4000UL
+#define MAX_SESSION_ITEMS      10
+
+// Ultrasonic HC-SR04 (TRIG driven at 3.3 V; ECHO through 1k/2k divider)
+#define ULTRA_TRIG_PIN         13
+#define ULTRA_ECHO_PIN         2
+#define TRIGGER_DISTANCE_CM    20.0f
+#define CLEAR_DISTANCE_CM      25.0f   // hysteresis before re-arm
+#define DETECT_CONSECUTIVE     3       // reads <= trigger to accept a deposit
+#define CLEAR_CONSECUTIVE      5       // reads >= clear to re-arm
+#define DISTANCE_POLL_MS       100UL
+#define SETTLE_DELAY_MS        800UL   // wait after detection before capture
+
+// Servo
+#define SERVO_PIN              12
+#define SERVO_HOME_ANGLE       90
+#define SERVO_RECYCLABLE_ANGLE 180
+#define SERVO_RESIDUAL_ANGLE   0
+#define SERVO_HOLD_MS          2000UL
+#define SERVO_RETURN_MS        500UL   // time allowed for the flap to travel back to home
+
+// OLED SSD1306 128x64
+#define OLED_SDA_PIN           14
+#define OLED_SCL_PIN           15
+#define OLED_ADDR              0x3C
+
+// Screens & networking
+#define RESULT_SCREEN_MS       2500UL
+#define ERROR_SCREEN_MS        2500UL
+#define CLAIMED_SCREEN_MS      2500UL
+#define HTTP_TIMEOUT_MS        20000UL
+#define WIFI_RETRY_MS          20000UL
+#define WIFI_CONNECT_TIMEOUT_MS 10000UL
