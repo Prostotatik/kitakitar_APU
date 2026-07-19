@@ -8,6 +8,8 @@ struct GeminiResult {
 };
 
 // Sends the JPEG to Gemini (strict-JSON schema, thinking budget 0).
+// CONSUMES fb: it is returned to the camera driver before the upload starts
+// (on every path) — the caller must NOT call esp_camera_fb_return() on it.
 // True on success with a valid category; false on ANY failure (fail-closed).
 bool geminiClassify(camera_fb_t* fb, GeminiResult& out);
 

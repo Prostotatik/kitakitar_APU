@@ -11,6 +11,9 @@ camera_fb_t* hwCaptureJpeg();
 void hwUltraInit();
 // One HC-SR04 measurement in cm; 999.0f when no echo (open chamber).
 float hwReadDistanceCm();
+// Diagnostic probe: ECHO idle level + raw transition count in a 30 ms
+// post-trigger window. See bin_hw.cpp for interpretation.
+void hwUltraProbe(int& idleLevel, int& transitions);
 
 // Servo ---------------------------------------------------------------
 void hwServoInit();

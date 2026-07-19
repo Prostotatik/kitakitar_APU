@@ -82,8 +82,7 @@ static void processDeposit() {
     camera_fb_t* fb = hwCaptureJpeg();
     if (!fb) { failDeposit("Camera error"); return; }
     GeminiResult r;
-    bool ok = geminiClassify(fb, r);
-    esp_camera_fb_return(fb);
+    bool ok = geminiClassify(fb, r);  // consumes fb (returned before upload)
     if (!ok) { failDeposit("AI unavailable"); return; }
 
     const char* slug = categoryToSlug(r.category);
@@ -187,6 +186,7 @@ void setup() {
         Serial.println("[MEM] WARNING: PSRAM missing — enable Tools > PSRAM");
     dispBoot("wifi...");
     while (!netWifiConnected()) { netEnsureWifi(); delay(1000); }
+    netBootDiag();
     dispBoot("signing in...");
     if (!fbSignIn()) { dispBoot("auth failed"); delay(ERROR_SCREEN_MS); }  // deposits fail-closed until OK
     clearSession();
@@ -243,6 +243,23 @@ void loop() {
         now - lastDistanceRead >= DISTANCE_POLL_MS) {
         lastDistanceRead = now;
         float d = hwReadDistanceCm();
+#if DEBUG_ULTRA_LOG
+        // 1 Hz summary of the ~10 reads since the last line. `timeout` counts
+        // reads with no echo at all (reported as 999 = "chamber clear").
+        static unsigned long ultraLogAt = 0;
+        static int ultraOk = 0, ultraTimeout = 0;
+        static float ultraLast = -1.0f;
+        if (d >= 998.0f) ultraTimeout++; else { ultraOk++; ultraLast = d; }
+        if ((long)(now - ultraLogAt) >= 1000) {
+            ultraLogAt = now;
+            int idle = -1, trans = 0;
+            hwUltraProbe(idle, trans);
+            Serial.printf("[ULTRA] last=%.1fcm ok=%d timeout=%d idle=%d trans=%d armed=%d above=%d below=%d\n",
+                          ultraLast, ultraOk, ultraTimeout, idle, trans,
+                          (int)armed, aboveCount, belowCount);
+            ultraOk = ultraTimeout = 0;
+        }
+#endif
         if (!armed) {
             if (d >= CLEAR_DISTANCE_CM) {
                 if (++aboveCount >= CLEAR_CONSECUTIVE) { armed = true; aboveCount = 0; }

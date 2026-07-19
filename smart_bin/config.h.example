@@ -14,8 +14,11 @@
 #define BIN_CENTER_ID          "gwTyIuDCyDQtMdJIWbfoDYIVj0l1" // centers/{id} credited by this bin
 
 // Gemini (new dedicated key from Google AI Studio)
+// gemini-2.5-flash was retired for new keys (HTTP 404 "no longer available
+// to new users"); gemini-3.5-flash is the current stable flash model and
+// accepts the same generationConfig (responseSchema + thinkingBudget 0).
 #define GEMINI_API_KEY         "YOUR_GEMINI_API_KEY"
-#define GEMINI_MODEL           "gemini-2.5-flash"
+#define GEMINI_MODEL           "gemini-3.5-flash"
 
 // ═══ Behavior constants ══════════════════════════════════════════════
 
@@ -37,10 +40,13 @@
 #define MAX_SESSION_ITEMS      10
 
 // Ultrasonic HC-SR04 (TRIG driven at 3.3 V; ECHO through 1k/2k divider)
+// Tuning rule: CLEAR_DISTANCE_CM must sit a few cm BELOW the empty-chamber
+// reading (see `last=` in the [ULTRA] log) or the bin can never re-arm.
+// TRIGGER_DISTANCE_CM must sit a few cm below CLEAR_DISTANCE_CM (hysteresis).
 #define ULTRA_TRIG_PIN         13
 #define ULTRA_ECHO_PIN         2
-#define TRIGGER_DISTANCE_CM    20.0f
-#define CLEAR_DISTANCE_CM      25.0f   // hysteresis before re-arm
+#define TRIGGER_DISTANCE_CM    15.0f
+#define CLEAR_DISTANCE_CM      18.0f   // hysteresis before re-arm
 #define DETECT_CONSECUTIVE     3       // reads <= trigger to accept a deposit
 #define CLEAR_CONSECUTIVE      5       // reads >= clear to re-arm
 #define DISTANCE_POLL_MS       100UL
@@ -63,6 +69,10 @@
 #define RESULT_SCREEN_MS       2500UL
 #define ERROR_SCREEN_MS        2500UL
 #define CLAIMED_SCREEN_MS      2500UL
-#define HTTP_TIMEOUT_MS        20000UL
+#define HTTP_TIMEOUT_MS        30000UL  // gemini-3.5-flash measured ~12 s per reply
 #define WIFI_RETRY_MS          20000UL
 #define WIFI_CONNECT_TIMEOUT_MS 10000UL
+
+// ═══ Diagnostics (serial only — set both to 0 for deployment) ════════
+#define DEBUG_ULTRA_LOG        1   // 1 Hz summary of HC-SR04 reads + arming state
+#define DEBUG_VISION_LOG       1   // dump captured JPEG as base64 + raw Gemini reply

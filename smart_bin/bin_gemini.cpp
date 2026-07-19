@@ -10,7 +10,10 @@
     GEMINI_MODEL ":generateContent?key=" GEMINI_API_KEY
 
 // Request body = HEAD + <base64 jpeg> + TAIL. Both halves are compile-time
-// constants; the assembled body lives in PSRAM to spare internal heap.
+// constants. The assembled body prefers internal RAM: TLS uploads sourced
+// from PSRAM failed on this board (-3 send payload failed) while the same
+// request with an internal-RAM body (reference sketch in
+// "Gemini AI Calling/AI_camera") went through.
 static const char kHead[] =
     "{\"contents\":[{\"parts\":[{\"text\":\""
     "You are the vision system of a recycling smart bin. Look at the single "
@@ -58,27 +61,58 @@ static bool isKnownCategory(const char* c) {
 }
 
 bool geminiClassify(camera_fb_t* fb, GeminiResult& out) {
-    if (!fb || fb->len == 0) return false;
+    if (!fb) return false;
+    size_t jpegLen = fb->len;
+    if (jpegLen == 0) { esp_camera_fb_return(fb); return false; }
 
     size_t b64Len = 0;
-    mbedtls_base64_encode(nullptr, 0, &b64Len, fb->buf, fb->len);
+    mbedtls_base64_encode(nullptr, 0, &b64Len, fb->buf, jpegLen);
     uint8_t* b64 = (uint8_t*)heap_caps_malloc(b64Len + 1, MALLOC_CAP_SPIRAM);
-    if (!b64) { Serial.println("[GEM] PSRAM alloc failed (b64)"); return false; }
-    size_t written = 0;
-    if (mbedtls_base64_encode(b64, b64Len + 1, &written, fb->buf, fb->len) != 0) {
-        free(b64); return false;
+    if (!b64) {
+        esp_camera_fb_return(fb);
+        Serial.println("[GEM] PSRAM alloc failed (b64)");
+        return false;
     }
+    size_t written = 0;
+    int encErr = mbedtls_base64_encode(b64, b64Len + 1, &written, fb->buf, jpegLen);
+    // Frame fully encoded — hand it back to the driver BEFORE the TLS
+    // request (the known-good reference sketch frees it here too; holding
+    // it across the upload was a delta against the working transport).
+    esp_camera_fb_return(fb);
+    if (encErr != 0) { free(b64); return false; }
+
+#if DEBUG_VISION_LOG
+    // Paste everything between the markers into a base64→jpg decoder to see
+    // the exact photo Gemini receives. ~2 s at 115200 baud.
+    Serial.printf("[CAM] JPEG %u bytes — base64 dump begin\n", (unsigned)jpegLen);
+    Serial.write(b64, written);
+    Serial.println("\n[CAM] base64 dump end");
+#endif
 
     size_t bodyLen = sizeof(kHead) - 1 + written + sizeof(kTail) - 1;
-    uint8_t* body = (uint8_t*)heap_caps_malloc(bodyLen, MALLOC_CAP_SPIRAM);
-    if (!body) { free(b64); Serial.println("[GEM] PSRAM alloc failed (body)"); return false; }
+    bool bodyInPsram = false;
+    uint8_t* body = (uint8_t*)heap_caps_malloc(bodyLen,
+                                               MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+    if (!body) {
+        body = (uint8_t*)heap_caps_malloc(bodyLen, MALLOC_CAP_SPIRAM);
+        bodyInPsram = true;
+    }
+    if (!body) { free(b64); Serial.println("[GEM] alloc failed (body)"); return false; }
     memcpy(body, kHead, sizeof(kHead) - 1);
     memcpy(body + sizeof(kHead) - 1, b64, written);
     memcpy(body + sizeof(kHead) - 1 + written, kTail, sizeof(kTail) - 1);
     free(b64);
+#if DEBUG_VISION_LOG
+    Serial.printf("[GEM] body %u bytes in %s\n", (unsigned)bodyLen,
+                  bodyInPsram ? "PSRAM" : "internal RAM");
+#endif
 
     String resp;
     int code = netPostJson(GEMINI_URL, nullptr, body, bodyLen, resp);
+    if (code < 0) {                       // transport hiccup: one paced retry
+        delay(500);
+        code = netPostJson(GEMINI_URL, nullptr, body, bodyLen, resp);
+    }
     free(body);
     if (code != 200) {
         Serial.printf("[GEM] HTTP %d: %s\n", code, resp.substring(0, 200).c_str());
@@ -93,6 +127,9 @@ bool geminiClassify(camera_fb_t* fb, GeminiResult& out) {
             != DeserializationError::Ok) return false;
     const char* text = env["candidates"][0]["content"]["parts"][0]["text"];
     if (!text) { Serial.println("[GEM] no text part"); return false; }
+#if DEBUG_VISION_LOG
+    Serial.printf("[GEM] raw: %s\n", text);
+#endif
 
     JsonDocument inner;
     if (deserializeJson(inner, text) != DeserializationError::Ok) {

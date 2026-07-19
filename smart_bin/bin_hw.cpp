@@ -84,6 +84,26 @@ void hwUltraInit() {
     pinMode(ULTRA_ECHO_PIN, INPUT);
 }
 
+// Diagnostic: fire one trigger, then raw-sample ECHO for 30 ms. Reports the
+// pin's idle level before the trigger and how many level transitions occur.
+// Distinguishes "pulses arrive but pulseIn misses them" (firmware) from
+// "the line never moves at all" (wiring / divider / sensor power).
+void hwUltraProbe(int& idleLevel, int& transitions) {
+    idleLevel = digitalRead(ULTRA_ECHO_PIN);
+    digitalWrite(ULTRA_TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(ULTRA_TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(ULTRA_TRIG_PIN, LOW);
+    transitions = 0;
+    int prev = digitalRead(ULTRA_ECHO_PIN);
+    unsigned long t0 = micros();
+    while (micros() - t0 < 30000UL) {
+        int v = digitalRead(ULTRA_ECHO_PIN);
+        if (v != prev) { transitions++; prev = v; }
+    }
+}
+
 float hwReadDistanceCm() {
     digitalWrite(ULTRA_TRIG_PIN, LOW);
     delayMicroseconds(2);
